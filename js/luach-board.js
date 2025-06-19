@@ -511,8 +511,17 @@ class LuachBoardApp {
      * Show success message
      */
     showSuccess(message) {
-        // Simple alert for now - in production use a better notification system
-        alert(`Success: ${message}`);
+        // Display success message inline on the page
+        const successContainer = document.getElementById('success-message-container');
+        if (successContainer) {
+            successContainer.textContent = `Success: ${message}`;
+            successContainer.style.display = 'block';
+
+            // Automatically hide the message after 5 seconds
+            setTimeout(() => {
+                successContainer.style.display = 'none';
+            }, 5000);
+        }
     }
 
     /**
