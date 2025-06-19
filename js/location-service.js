@@ -8,6 +8,7 @@ class LocationService {
         this.currentLocation = null;
         this.apiKey = null; // You'll need to set up a geocoding API key
         this.storageKey = 'luach-location-settings';
+        this.titleKey = 'luach-custom-title';
         this.loadSavedLocation();
     }
 
@@ -419,6 +420,24 @@ class LocationService {
         return this.currentLocation && 
                typeof this.currentLocation.latitude === 'number' && 
                typeof this.currentLocation.longitude === 'number';
+    }
+
+    /**
+     * Get custom title from local storage
+     */
+    getCustomTitle() {
+        return localStorage.getItem(this.titleKey) || '';
+    }
+
+    /**
+     * Set custom title in local storage
+     */
+    setCustomTitle(title) {
+        if (title) {
+            localStorage.setItem(this.titleKey, title);
+        } else {
+            localStorage.removeItem(this.titleKey);
+        }
     }
 }
 

@@ -27,7 +27,7 @@ class LuachBoardApp {
             this.setupEventListeners();
             this.loadInitialData();
             this.startAutoRefresh();
-            
+            this.updateHeaderTitle();
             console.log('Luach Board App initialized successfully');
         } catch (error) {
             console.error('Failed to initialize app:', error);
@@ -243,9 +243,11 @@ class LuachBoardApp {
         this.currentPage = 'location-page';
         document.getElementById('main-page').classList.remove('ui-page-active');
         document.getElementById('location-page').classList.add('ui-page-active');
-        
-        // Update current location display in settings
-        this.updateCurrentLocationSettings();
+        // Load custom title into input
+        const customTitleInput = document.getElementById('custom-title-input');
+        if (customTitleInput) {
+            customTitleInput.value = locationService.getCustomTitle();
+        }
     }
 
     /**
@@ -423,6 +425,9 @@ class LuachBoardApp {
                 };
             } else if (this.pendingLocation) {
                 locationData = this.pendingLocation;
+            } else if (locationService.hasLocation()) {
+                // No new location, but a current location exists: allow saving settings
+                locationData = locationService.getCurrentLocation();
             } else {
                 this.showError('Please select and configure a location first');
                 return;
@@ -438,6 +443,14 @@ class LuachBoardApp {
             const success = locationService.updateLocation(locationData, selectedMethod);
             
             if (success) {
+                // Save custom title
+                const customTitleInput = document.getElementById('custom-title-input');
+                if (customTitleInput) {
+                    locationService.setCustomTitle(customTitleInput.value.trim());
+                }
+                // Update header title immediately
+                this.updateHeaderTitle();
+
                 this.updateCurrentLocationSettings();
                 this.showMainPage();
                 this.showSuccess('Location saved successfully', locationData);
@@ -480,6 +493,17 @@ class LuachBoardApp {
     }
 
     /**
+     * Update header title on main page
+     */
+    updateHeaderTitle() {
+        const customTitle = locationService.getCustomTitle();
+        const titleEl = document.querySelector('.ui-title');
+        if (titleEl) {
+            titleEl.textContent = customTitle || 'Luach Board';
+        }
+    }
+
+    /**
      * Show geocode result
      */
     showGeocodeResult(message, type) {
@@ -505,8 +529,29 @@ class LuachBoardApp {
      * Show error message
      */
     showError(message) {
-        // Simple alert for now - in production use a better notification system
-        alert(`Error: ${message}`);
+        // Show error in a red bar above the Save Settings button
+        let errorEl = document.getElementById('settings-error');
+        if (!errorEl) {
+            errorEl = document.createElement('div');
+            errorEl.id = 'settings-error';
+            errorEl.style.color = '#fff';
+            errorEl.style.background = '#e74c3c';
+            errorEl.style.padding = '10px';
+            errorEl.style.margin = '10px 0';
+            errorEl.style.borderRadius = '8px';
+            errorEl.style.textAlign = 'center';
+            errorEl.style.fontWeight = 'bold';
+            errorEl.style.fontSize = '15px';
+        }
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        // Insert above the Save Settings button
+        const saveBtn = document.getElementById('save-location-btn');
+        if (saveBtn && saveBtn.parentElement) {
+            saveBtn.parentElement.insertBefore(errorEl, saveBtn);
+        }
+        // Hide after 5 seconds
+        setTimeout(() => { if (errorEl) errorEl.style.display = 'none'; }, 5000);
     }
 
     /**
