@@ -175,46 +175,21 @@ class KosherJavaWrapper {
      */
     getHebrewDate(date = new Date()) {
         try {
-            // Simplified Hebrew date calculation
-            // In production, use KosherJava's JewishCalendar class
-            const hebrewDate = this.calculateHebrewDate(date);
-            return hebrewDate;
+            if (!window.KosherZmanim) {
+                throw new Error('kosher-zmanim library not loaded');
+            }
+            const JewishCalendar = window.KosherZmanim.JewishCalendar;
+            const HebrewDateFormatter = window.KosherZmanim.HebrewDateFormatter;
+            const jewishCal = new JewishCalendar(date);
+            const formatter = new HebrewDateFormatter();
+            // Optionally: formatter.setHebrewFormat(true);
+            return {
+                formatted: formatter.format(jewishCal)
+            };
         } catch (error) {
             console.error('Error getting Hebrew date:', error);
             return null;
         }
-    }
-
-    /**
-     * Simplified Hebrew date calculation
-     * Replace with actual KosherJava implementation
-     */
-    calculateHebrewDate(date) {
-        // This is a very simplified Hebrew date calculation
-        // For production, use the actual KosherJava library
-        
-        const hebrewMonths = [
-            'תשרי', 'חשון', 'כסלו', 'טבת', 'שבט', 'אדר',
-            'ניסן', 'אייר', 'סיון', 'תמוז', 'אב', 'אלול'
-        ];
-        
-        const hebrewDaysOfWeek = [
-            'ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'
-        ];
-        
-        // Simplified calculation (not accurate for actual Hebrew calendar)
-        const year = date.getFullYear() + 3760; // Approximate
-        const monthIndex = date.getMonth();
-        const day = date.getDate();
-        const dayOfWeek = date.getDay();
-        
-        return {
-            day: this.numberToHebrew(day),
-            month: hebrewMonths[monthIndex],
-            year: this.numberToHebrew(year),
-            dayOfWeek: `יום ${hebrewDaysOfWeek[dayOfWeek]}`,
-            formatted: `יום ${hebrewDaysOfWeek[dayOfWeek]}, ${this.numberToHebrew(day)} ${hebrewMonths[monthIndex]} ${this.numberToHebrew(year)}`
-        };
     }
 
     /**
