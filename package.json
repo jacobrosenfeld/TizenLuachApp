@@ -30,6 +30,9 @@
     "url": "https://github.com/your-org/tizen-luach-app/issues"
   },
   "homepage": "https://github.com/your-org/tizen-luach-app#readme",
+  "dependencies": {
+    "kosher-zmanim": "^1.2.1"
+  },
   "devDependencies": {
     "http-server": "^14.1.1"
   },
