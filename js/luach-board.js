@@ -8,6 +8,7 @@ class LuachBoardApp {
         this.currentPage = 'main-page';
         this.refreshInterval = null;
         this.autoRefreshMinutes = 60; // Refresh every hour
+        this.showSeconds = this.loadShowSecondsSetting();
         
         // Wait for DOM to be ready
         if (document.readyState === 'loading') {
@@ -33,6 +34,13 @@ class LuachBoardApp {
             console.error('Failed to initialize app:', error);
             this.showError('Failed to initialize application');
         }
+    }
+
+    loadShowSecondsSetting() {
+        return localStorage.getItem('luach-show-seconds') === 'true';
+    }
+    saveShowSecondsSetting(val) {
+        localStorage.setItem('luach-show-seconds', val ? 'true' : 'false');
     }
 
     /**
@@ -93,6 +101,23 @@ class LuachBoardApp {
                 input.addEventListener('blur', () => this.validateAndPreviewCoordinates());
             });
         }
+
+        // Show seconds toggle (now a button)
+        const showSecondsBtn = document.getElementById('show-seconds-btn');
+        if (showSecondsBtn) {
+            this.updateShowSecondsButton(showSecondsBtn);
+            showSecondsBtn.addEventListener('click', () => {
+                this.showSeconds = !this.showSeconds;
+                this.saveShowSecondsSetting(this.showSeconds);
+                this.updateShowSecondsButton(showSecondsBtn);
+                this.refreshZmanim();
+            });
+        }
+    }
+
+    updateShowSecondsButton(btn) {
+        btn.textContent = this.showSeconds ? 'Hide Seconds' : 'Show Seconds';
+        btn.classList.toggle('active', this.showSeconds);
     }
 
     /**
@@ -194,9 +219,8 @@ class LuachBoardApp {
             if (typeof time === 'string') {
                 dateObj = new Date(time);
             }
-            console.log(`Element: ${elementId}, Raw:`, time, 'Type:', typeof time, 'DateObj:', dateObj, 'Valid:', dateObj instanceof Date && !isNaN(dateObj.getTime()));
             if (element) {
-                element.textContent = kosherJava.formatTime(dateObj, '12h', true);
+                element.textContent = kosherJava.formatTime(dateObj, '12h', this.showSeconds);
             }
         }
     }
@@ -443,7 +467,7 @@ class LuachBoardApp {
                             return;
                         }
                     }
-                    locationData = this
+                    locationData = this.pendingLocation;
                 }
             } else if (selectedMethod === 'coordinates') {
                 const latInput = document.getElementById('latitude-input');
