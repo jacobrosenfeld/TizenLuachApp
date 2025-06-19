@@ -79,7 +79,7 @@ class LocationService {
             // Lazy-load the zip code data (replace with full file for production)
             try {
                 // For demo, use a small sample. For production, load a full JSON file.
-                this._zipcodes = (await import('./zipcodes-sample.js')).US_ZIPCODES;
+                this._zipcodes = (await import('./zipcodes.js')).US_ZIPCODES;
             } catch (e) {
                 this._zipcodes = {};
             }
