@@ -7,8 +7,10 @@ class LuachBoardApp {
     constructor() {
         this.currentPage = 'main-page';
         this.refreshInterval = null;
-        this.autoRefreshMinutes = this.loadAutoRefreshSetting(); // Load from storage or default
+        this.autoRefreshMinutes = this.loadAutoRefreshSetting();
         this.showSeconds = this.loadShowSecondsSetting();
+        this.allowZmanimLookups = this.loadAllowZmanimLookupsSetting();
+        this.selectedDate = new Date();
         
         // Wait for DOM to be ready
         if (document.readyState === 'loading') {
@@ -49,6 +51,13 @@ class LuachBoardApp {
     }
     saveShowSecondsSetting(val) {
         localStorage.setItem('luach-show-seconds', val ? 'true' : 'false');
+    }
+
+    loadAllowZmanimLookupsSetting() {
+        return localStorage.getItem('luach-allow-zmanim-lookups') === 'true';
+    }
+    saveAllowZmanimLookupsSetting(val) {
+        localStorage.setItem('luach-allow-zmanim-lookups', val ? 'true' : 'false');
     }
 
     /**
@@ -136,6 +145,38 @@ class LuachBoardApp {
                 this.startAutoRefresh();
             });
         }
+
+        // Allow Zmanim Lookups toggle
+        const allowLookupsBtn = document.getElementById('allow-zmanim-lookups-btn');
+        if (allowLookupsBtn) {
+            this.updateAllowLookupsButton(allowLookupsBtn);
+            allowLookupsBtn.addEventListener('click', () => {
+                this.allowZmanimLookups = !this.allowZmanimLookups;
+                this.saveAllowZmanimLookupsSetting(this.allowZmanimLookups);
+                this.updateAllowLookupsButton(allowLookupsBtn);
+                this.renderDatePickerAndArrows();
+            });
+        }
+
+        // Date picker and arrows
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'zmanim-date-left') {
+                this.changeSelectedDate(-1);
+            } else if (e.target && e.target.id === 'zmanim-date-right') {
+                this.changeSelectedDate(1);
+            }
+        });
+
+        // Date picker change
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.id === 'zmanim-date-picker') {
+                const val = e.target.value;
+                if (val) {
+                    this.selectedDate = new Date(val + 'T00:00:00');
+                    this.refreshZmanim();
+                }
+            }
+        });
     }
 
     updateShowSecondsButton(btn) {
@@ -143,11 +184,52 @@ class LuachBoardApp {
         btn.classList.toggle('active', this.showSeconds);
     }
 
+    updateAllowLookupsButton(btn) {
+        btn.textContent = this.allowZmanimLookups ? 'Disable Zmanim Lookups' : 'Allow Zmanim Lookups';
+        btn.classList.toggle('active', this.allowZmanimLookups);
+    }
+
+    renderDatePickerAndArrows() {
+        const board = document.querySelector('.luach-board');
+        if (!board) return;
+        let picker = document.getElementById('zmanim-date-controls');
+        if (this.allowZmanimLookups) {
+            if (!picker) {
+                const div = document.createElement('div');
+                div.id = 'zmanim-date-controls';
+                div.style.display = 'flex';
+                div.style.justifyContent = 'center';
+                div.style.alignItems = 'center';
+                div.style.marginBottom = '10px';
+                div.innerHTML = `
+                    <button id="zmanim-date-left" class="ui-btn ui-btn-icon">&#8592;</button>
+                    <input type="date" id="zmanim-date-picker" class="ui-input" style="width: 140px; margin: 0 8px;" value="${this.selectedDate.toISOString().slice(0,10)}">
+                    <button id="zmanim-date-right" class="ui-btn ui-btn-icon">&#8594;</button>
+                `;
+                board.insertBefore(div, board.firstChild);
+            } else {
+                const input = picker.querySelector('#zmanim-date-picker');
+                if (input) input.value = this.selectedDate.toISOString().slice(0,10);
+            }
+        } else if (picker) {
+            picker.remove();
+        }
+    }
+
+    changeSelectedDate(deltaDays) {
+        const d = new Date(this.selectedDate);
+        d.setDate(d.getDate() + deltaDays);
+        this.selectedDate = d;
+        this.renderDatePickerAndArrows();
+        this.refreshZmanim();
+    }
+
     /**
      * Load initial data and display
      */
     async loadInitialData() {
         try {
+            this.renderDatePickerAndArrows();
             await this.updateLocationDisplay();
             await this.refreshZmanim();
             this.updateCurrentLocationSettings();
@@ -197,12 +279,12 @@ class LuachBoardApp {
                 location.timezone
             );
 
-            const today = new Date();
+            const date = this.allowZmanimLookups ? this.selectedDate : new Date();
             // Wait for kosherJava to be ready before calculating zmanim
             await kosherJava.ready();
-            const zmanim = await kosherJava.calculateZmanim(today);
+            const zmanim = await kosherJava.calculateZmanim(date);
             this.updateZmanimDisplay(zmanim);
-            this.updateDateDisplay(today);
+            this.updateDateDisplay(date);
             this.updateLastUpdated();
         } catch (error) {
             console.error('Error refreshing zmanim:', error);
