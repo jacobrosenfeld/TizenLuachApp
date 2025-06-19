@@ -182,9 +182,12 @@ class KosherJavaWrapper {
             const HebrewDateFormatter = window.KosherZmanim.HebrewDateFormatter;
             const jewishCal = new JewishCalendar(date);
             const formatter = new HebrewDateFormatter();
-            // Optionally: formatter.setHebrewFormat(true);
+            formatter.setHebrewFormat(true); // Output in Hebrew
+            // Get Hebrew day of week
+            const hebrewDays = ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'יום שבת'];
+            const dayOfWeek = hebrewDays[jewishCal.getDayOfWeek() - 1];
             return {
-                formatted: formatter.format(jewishCal)
+                formatted: `${dayOfWeek}, ${formatter.format(jewishCal)}`
             };
         } catch (error) {
             console.error('Error getting Hebrew date:', error);
