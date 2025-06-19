@@ -124,9 +124,11 @@
     </div>
 
     <!-- Load our JavaScript modules -->
-    <script src="js/location-service.js"></script>
+    <script src="js/kosher-zmanim-loader.js"></script>
     <script src="js/kosherjava-wrapper.js"></script>
-
+    <script src="js/location-service.js"></script>
+    <script src="js/luach-board.js"></script>
+    <script src="js/kosher-zmanim-debug.js"></script>
     <script>
         // Test functions
         function testResult(elementId, testName, success, message) {
@@ -162,28 +164,34 @@
             }
         }
 
-        function calculateZmanim() {
+        async function calculateZmanim() {
             try {
                 // Set a test location (New York)
+                if (typeof kosherJava === 'undefined' || !kosherJava.setLocation) {
+                    document.getElementById('zmanim-display').innerHTML = '<span class="error">kosherJava not loaded</span>';
+                    return;
+                }
                 kosherJava.setLocation(40.7128, -74.0060, 'America/New_York');
-                
                 const today = new Date();
-                const zmanim = kosherJava.calculateZmanim(today);
-                
+                await kosherJava.ready();
+                const zmanim = await kosherJava.calculateZmanim(today);
                 const display = document.getElementById('zmanim-display');
                 display.innerHTML = '';
-                
+                // Use the same zmanim as index.html
                 const zmanimList = [
                     { name: 'Sunrise', time: zmanim.sunrise },
                     { name: 'Sunset', time: zmanim.sunset },
                     { name: 'Alos Hashachar', time: zmanim.alos },
+                    { name: 'Misheyakir', time: zmanim.misheyakir },
                     { name: 'Sof Zman Shma', time: zmanim.sofZmanShma },
                     { name: 'Sof Zman Tfila', time: zmanim.sofZmanTfila },
                     { name: 'Chatzos', time: zmanim.chatzos },
                     { name: 'Mincha Gedola', time: zmanim.minchaGedola },
-                    { name: 'Tzeit Hakochavim', time: zmanim.tzeitHakochavim }
+                    { name: 'Mincha Ketana', time: zmanim.minchaKetana },
+                    { name: 'Plag Hamincha', time: zmanim.plagHamincha },
+                    { name: 'Tzeit Hakochavim', time: zmanim.tzeitHakochavim },
+                    { name: 'Tzeit 72 min', time: zmanim.tzeit72 }
                 ];
-                
                 zmanimList.forEach(zman => {
                     const div = document.createElement('div');
                     div.className = 'zman-item';
@@ -193,7 +201,6 @@
                     `;
                     display.appendChild(div);
                 });
-                
             } catch (error) {
                 document.getElementById('zmanim-display').innerHTML = 
                     `<span class="error">Error calculating zmanim: ${error.message}</span>`;
@@ -208,9 +215,7 @@
                 const resultEl = document.getElementById('hebrew-result');
                 if (hebrewDate && hebrewDate.formatted) {
                     resultEl.innerHTML = `
-                        <div class="success">✓ Hebrew Date: ${hebrewDate.formatted}</div>
-                        <div>Day: ${hebrewDate.day} | Month: ${hebrewDate.month} | Year: ${hebrewDate.year}</div>
-                    `;
+                        <div class="success">✓ Hebrew Date: ${hebrewDate.formatted}</div>                    `;
                 } else {
                     resultEl.innerHTML = '<span class="error">✗ Failed to get Hebrew date</span>';
                 }
