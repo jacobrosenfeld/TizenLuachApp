@@ -7,7 +7,7 @@ class LuachBoardApp {
     constructor() {
         this.currentPage = 'main-page';
         this.refreshInterval = null;
-        this.autoRefreshMinutes = 60; // Refresh every hour
+        this.autoRefreshMinutes = this.loadAutoRefreshSetting(); // Load from storage or default
         this.showSeconds = this.loadShowSecondsSetting();
         
         // Wait for DOM to be ready
@@ -34,6 +34,14 @@ class LuachBoardApp {
             console.error('Failed to initialize app:', error);
             this.showError('Failed to initialize application');
         }
+    }
+
+    loadAutoRefreshSetting() {
+        const val = localStorage.getItem('luach-auto-refresh-minutes');
+        return val ? parseInt(val, 10) || 60 : 60;
+    }
+    saveAutoRefreshSetting(val) {
+        localStorage.setItem('luach-auto-refresh-minutes', String(val));
     }
 
     loadShowSecondsSetting() {
@@ -111,6 +119,21 @@ class LuachBoardApp {
                 this.saveShowSecondsSetting(this.showSeconds);
                 this.updateShowSecondsButton(showSecondsBtn);
                 this.refreshZmanim();
+            });
+        }
+
+        // Auto-refresh interval input
+        const autoRefreshInput = document.getElementById('auto-refresh-input');
+        if (autoRefreshInput) {
+            autoRefreshInput.value = this.autoRefreshMinutes;
+            autoRefreshInput.addEventListener('change', (e) => {
+                let val = parseInt(autoRefreshInput.value, 10);
+                if (isNaN(val) || val < 1) val = 1;
+                if (val > 1440) val = 1440;
+                this.autoRefreshMinutes = val;
+                this.saveAutoRefreshSetting(val);
+                autoRefreshInput.value = val;
+                this.startAutoRefresh();
             });
         }
     }
@@ -645,12 +668,11 @@ class LuachBoardApp {
         if (this.refreshInterval) {
             clearInterval(this.refreshInterval);
         }
-
-        this.refreshInterval = setInterval(() => {
-            if (this.currentPage === 'main-page' && locationService.hasLocation()) {
+        if (this.autoRefreshMinutes > 0) {
+            this.refreshInterval = setInterval(() => {
                 this.refreshZmanim();
-            }
-        }, this.autoRefreshMinutes * 60 * 1000);
+            }, this.autoRefreshMinutes * 60 * 1000);
+        }
     }
 
     /**

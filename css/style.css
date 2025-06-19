@@ -358,6 +358,12 @@ body {
     box-sizing: border-box;
 }
 
+#auto-refresh-input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .ui-btn {
     padding: 10px 20px;
     border: none;
