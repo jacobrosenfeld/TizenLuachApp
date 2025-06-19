@@ -402,22 +402,48 @@ class LuachBoardApp {
     /**
      * Save location settings
      */
-    saveLocation() {
+    async saveLocation() {
         try {
             const selectedMethod = document.querySelector('input[name="location-method"]:checked').value;
             let locationData = null;
 
-            if (selectedMethod === 'coordinates') {
+            if (selectedMethod === 'zipcode') {
+                const zipInput = document.getElementById('zipcode-input');
+                const zip = zipInput.value.trim();
+                const validation = locationService.validateZipCode(zip);
+                if (!validation.valid) {
+                    this.showError(validation.error);
+                    return;
+                }
+                // If no pendingLocation or pendingLocation doesn't match input, do lookup now
+                if (!this.pendingLocation || this.pendingLocation.method !== 'zipcode' || this.pendingLocation.name !== zip) {
+                    // Attempt lookup
+                    const geocodeBtn = document.getElementById('geocode-btn');
+                    if (geocodeBtn) geocodeBtn.disabled = true;
+                    const result = await locationService.geocodeZipCode(validation.zipCode);
+                    if (geocodeBtn) geocodeBtn.disabled = false;
+                    if (result.success) {
+                        this.pendingLocation = {
+                            name: result.data.name,
+                            latitude: result.data.latitude,
+                            longitude: result.data.longitude,
+                            method: 'zipcode'
+                        };
+                    } else {
+                        this.showError(result.error || 'Unable to lookup zip code');
+                        return;
+                    }
+                }
+                locationData = this.pendingLocation;
+            } else if (selectedMethod === 'coordinates') {
                 const latInput = document.getElementById('latitude-input');
                 const lngInput = document.getElementById('longitude-input');
                 const nameInput = document.getElementById('location-name-input');
-
                 const validation = locationService.validateCoordinates(latInput.value, lngInput.value);
                 if (!validation.valid) {
                     this.showError(validation.error);
                     return;
                 }
-
                 locationData = {
                     name: nameInput.value || `${validation.latitude.toFixed(4)}, ${validation.longitude.toFixed(4)}`,
                     latitude: validation.latitude,
@@ -426,7 +452,6 @@ class LuachBoardApp {
             } else if (this.pendingLocation) {
                 locationData = this.pendingLocation;
             } else if (locationService.hasLocation()) {
-                // No new location, but a current location exists: allow saving settings
                 locationData = locationService.getCurrentLocation();
             } else {
                 this.showError('Please select and configure a location first');
