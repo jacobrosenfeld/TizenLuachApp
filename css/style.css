@@ -417,6 +417,26 @@ body {
     font-family: 'Courier New', monospace;
 }
 
+/* Success Popup Styles */
+.success-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #2ecc71; /* Green background for success */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    z-index: 1000;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.success-popup.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 /* Utility classes */
 .hidden {
     display: none !important;

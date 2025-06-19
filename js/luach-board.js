@@ -438,7 +438,7 @@ class LuachBoardApp {
             if (success) {
                 this.updateCurrentLocationSettings();
                 this.showMainPage();
-                this.showSuccess('Location saved successfully');
+                this.showSuccess('Location saved successfully', locationData);
             } else {
                 this.showError('Failed to save location');
             }
@@ -510,16 +510,24 @@ class LuachBoardApp {
     /**
      * Show success message
      */
-    showSuccess(message) {
-        // Display success message inline on the page
+    showSuccess(message, locationData) {
+        // Display success message as a green popup in the top-right corner
         const successContainer = document.getElementById('success-message-container');
-        if (successContainer) {
-            successContainer.textContent = `Success: ${message}`;
+        const successText = document.getElementById('success-message-text');
+        if (successContainer && successText) {
+            const locationInfo = locationData ? `Location: ${locationData.name}, Timezone: ${locationData.timezone || 'auto'}` : '';
+            successText.textContent = `Success: ${message}. ${locationInfo}`;
+            successContainer.classList.remove('hidden');
+            successContainer.style.opacity = '1';
             successContainer.style.display = 'block';
 
-            // Automatically hide the message after 5 seconds
+            // Fade out after 5 seconds
             setTimeout(() => {
-                successContainer.style.display = 'none';
+                successContainer.style.opacity = '0';
+                setTimeout(() => {
+                    successContainer.style.display = 'none';
+                    successContainer.classList.add('hidden');
+                }, 500); // match CSS transition
             }, 5000);
         }
     }
