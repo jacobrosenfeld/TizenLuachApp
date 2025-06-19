@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" 
+        id="http://luachboard.app/TizenLuachApp" version="1.0.0" viewmodes="maximized">
+    
+    <tizen:application id="lLrD5TfPtR.TizenLuachApp" package="lLrD5TfPtR" required_version="6.5"/>
+    
+    <content src="index.html"/>
+    
+    <name>Luach Board</name>
+    <description>Jewish calendar and zmanim display board</description>
+    
+    <author href="http://luachboard.app" email="developer@luachboard.app">Luach Board Team</author>
+    
+    <icon src="icon.png"/>
+    
+    <!-- Features -->
+    <tizen:feature name="http://tizen.org/feature/web.service"/>
+    <tizen:feature name="http://tizen.org/feature/location"/>
+    <tizen:feature name="http://tizen.org/feature/location.gps"/>
+    <tizen:feature name="http://tizen.org/feature/network.internet"/>
+    
+    <!-- Privileges -->
+    <tizen:privilege name="http://tizen.org/privilege/location"/>
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:privilege name="http://tizen.org/privilege/storage"/>
+    
+    <!-- Settings -->
+    <tizen:setting screen-orientation="auto-rotation" context-menu="enable" 
+                   background-support="disable" encryption="disable" 
+                   install-location="auto" hwkey-event="enable"/>
+    
+    <!-- Content Security Policy -->
+    <tizen:content-security-policy>
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval';
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: blob:;
+        connect-src 'self' https://nominatim.openstreetmap.org https://*.googleapis.com;
+        font-src 'self' data:;
+    </tizen:content-security-policy>
+    
+    <!-- Web App Manifest -->
+    <tizen:metadata key="http://samsung.com/tv/metadata/use.preview" value="endpoint_URL"/>
+    
+</widget>
+

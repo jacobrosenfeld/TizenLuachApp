@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luach Board - Zmanim Display</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="lib/tau/wearable/theme/default/tau.min.css">
+    <script src="lib/tau/wearable/js/tau.min.js"></script>
+    <script src="js/kosherjava-wrapper.js"></script>
+    <script src="js/location-service.js"></script>
+    <script src="js/luach-board.js"></script>
+</head>
+<body>
+    <!-- Main Luach Display Page -->
+    <div class="ui-page ui-page-active" id="main-page">
+        <header class="ui-header">
+            <h2 class="ui-title">Luach Board</h2>
+            <div class="ui-header-right">
+                <button class="ui-btn ui-btn-icon" id="settings-btn">
+                    <i class="ui-icon ui-icon-setting"></i>
+                </button>
+            </div>
+        </header>
+        
+        <div class="ui-content">
+            <!-- Date and Location Display -->
+            <div class="date-location-section">
+                <div class="hebrew-date" id="hebrew-date"></div>
+                <div class="english-date" id="english-date"></div>
+                <div class="location-display" id="location-display">
+                    <span id="location-name">Loading location...</span>
+                    <button class="location-edit-btn" id="location-edit-btn">📍</button>
+                </div>
+            </div>
+            
+            <!-- Main Zmanim Display Board -->
+            <div class="luach-board">
+                <div class="zmanim-grid">
+                    <!-- Sunrise/Sunset Section -->
+                    <div class="zman-card sunrise-sunset">
+                        <div class="card-header">
+                            <h3>נץ החמה / שקיעה</h3>
+                            <h4>Sunrise / Sunset</h4>
+                        </div>
+                        <div class="times-container">
+                            <div class="time-item">
+                                <span class="time" id="sunrise">--:--</span>
+                                <span class="label">Sunrise</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="sunset">--:--</span>
+                                <span class="label">Sunset</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Shacharit Zmanim -->
+                    <div class="zman-card shacharit">
+                        <div class="card-header">
+                            <h3>זמני שחרית</h3>
+                            <h4>Shacharit Times</h4>
+                        </div>
+                        <div class="times-container">
+                            <div class="time-item">
+                                <span class="time" id="alos">--:--</span>
+                                <span class="label">עלות השחר</span>
+                                <span class="label-en">Alos Hashachar</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="misheyakir">--:--</span>
+                                <span class="label">משיכיר</span>
+                                <span class="label-en">Misheyakir</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="sof-zman-shma">--:--</span>
+                                <span class="label">סוף זמן שמע</span>
+                                <span class="label-en">Sof Zman Shma</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="sof-zman-tfila">--:--</span>
+                                <span class="label">סוף זמן תפילה</span>
+                                <span class="label-en">Sof Zman Tfila</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chatzos and Afternoon -->
+                    <div class="zman-card afternoon">
+                        <div class="card-header">
+                            <h3>חצות ואחה"צ</h3>
+                            <h4>Midday & Afternoon</h4>
+                        </div>
+                        <div class="times-container">
+                            <div class="time-item">
+                                <span class="time" id="chatzos">--:--</span>
+                                <span class="label">חצות</span>
+                                <span class="label-en">Chatzos</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="mincha-gedola">--:--</span>
+                                <span class="label">מנחה גדולה</span>
+                                <span class="label-en">Mincha Gedola</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="mincha-ketana">--:--</span>
+                                <span class="label">מנחה קטנה</span>
+                                <span class="label-en">Mincha Ketana</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="plag-hamincha">--:--</span>
+                                <span class="label">פלג המנחה</span>
+                                <span class="label-en">Plag Hamincha</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Evening Zmanim -->
+                    <div class="zman-card evening">
+                        <div class="card-header">
+                            <h3>זמני ערב</h3>
+                            <h4>Evening Times</h4>
+                        </div>
+                        <div class="times-container">
+                            <div class="time-item">
+                                <span class="time" id="bein-hashmashos">--:--</span>
+                                <span class="label">בין השמשות</span>
+                                <span class="label-en">Bein Hashmashos</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="tzeit-hakochavim">--:--</span>
+                                <span class="label">צאת הכוכבים</span>
+                                <span class="label-en">Tzeit Hakochavim</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time" id="tzeit-72">--:--</span>
+                                <span class="label">צאת ע"ב דקות</span>
+                                <span class="label-en">Tzeit 72 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Refresh Button -->
+                <div class="refresh-section">
+                    <button class="ui-btn ui-btn-icon ui-btn-circle" id="refresh-btn">
+                        <i class="ui-icon ui-icon-refresh"></i>
+                    </button>
+                    <span class="refresh-text">Refresh Zmanim</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span id="last-updated">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Location Settings Page -->
+    <div class="ui-page" id="location-page">
+        <header class="ui-header">
+            <button class="ui-btn ui-btn-icon ui-btn-back" id="back-btn">
+                <i class="ui-icon ui-icon-back"></i>
+            </button>
+            <h2 class="ui-title">Location Settings</h2>
+        </header>
+        
+        <div class="ui-content">
+            <div class="location-settings">
+                <!-- Location Method Selection -->
+                <div class="setting-section">
+                    <h3>Location Method</h3>
+                    <div class="radio-group">
+                        <label class="ui-radio">
+                            <input type="radio" name="location-method" value="zipcode" checked>
+                            <span class="ui-radio-indicator"></span>
+                            Zip Code
+                        </label>
+                        <label class="ui-radio">
+                            <input type="radio" name="location-method" value="coordinates">
+                            <span class="ui-radio-indicator"></span>
+                            Manual Coordinates
+                        </label>
+                        <label class="ui-radio">
+                            <input type="radio" name="location-method" value="gps">
+                            <span class="ui-radio-indicator"></span>
+                            GPS Location
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Zip Code Input -->
+                <div class="setting-section" id="zipcode-section">
+                    <h3>Zip Code</h3>
+                    <div class="input-group">
+                        <input type="text" class="ui-input" id="zipcode-input" placeholder="Enter zip code (e.g., 10001)" maxlength="10">
+                        <button class="ui-btn ui-btn-primary" id="geocode-btn">Lookup</button>
+                    </div>
+                    <div class="geocode-result" id="geocode-result"></div>
+                </div>
+
+                <!-- Manual Coordinates Input -->
+                <div class="setting-section hidden" id="coordinates-section">
+                    <h3>Manual Coordinates</h3>
+                    <div class="coordinate-inputs">
+                        <div class="input-group">
+                            <label>Latitude</label>
+                            <input type="number" class="ui-input" id="latitude-input" placeholder="40.7128" step="any" min="-90" max="90">
+                        </div>
+                        <div class="input-group">
+                            <label>Longitude</label>
+                            <input type="number" class="ui-input" id="longitude-input" placeholder="-74.0060" step="any" min="-180" max="180">
+                        </div>
+                        <div class="input-group">
+                            <label>Location Name (Optional)</label>
+                            <input type="text" class="ui-input" id="location-name-input" placeholder="New York, NY">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GPS Section -->
+                <div class="setting-section hidden" id="gps-section">
+                    <h3>GPS Location</h3>
+                    <button class="ui-btn ui-btn-primary" id="get-gps-btn">Get Current Location</button>
+                    <div class="gps-result" id="gps-result"></div>
+                </div>
+
+                <!-- Timezone Selection -->
+                <div class="setting-section">
+                    <h3>Timezone</h3>
+                    <select class="ui-select" id="timezone-select">
+                        <option value="auto">Auto-detect</option>
+                        <optgroup label="US Timezones">
+                            <option value="America/New_York">Eastern Time (ET)</option>
+                            <option value="America/Chicago">Central Time (CT)</option>
+                            <option value="America/Denver">Mountain Time (MT)</option>
+                            <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                            <option value="America/Anchorage">Alaska Time (AKT)</option>
+                            <option value="Pacific/Honolulu">Hawaii Time (HST)</option>
+                        </optgroup>
+                        <optgroup label="Canada">
+                            <option value="America/Toronto">Toronto/Montreal</option>
+                            <option value="America/Vancouver">Vancouver</option>
+                            <option value="America/Winnipeg">Winnipeg</option>
+                        </optgroup>
+                        <optgroup label="Israel & Middle East">
+                            <option value="Asia/Jerusalem">Israel (Jerusalem)</option>
+                            <option value="Asia/Tel_Aviv">Israel (Tel Aviv)</option>
+                        </optgroup>
+                        <optgroup label="Europe">
+                            <option value="Europe/London">London (GMT/BST)</option>
+                            <option value="Europe/Paris">Paris (CET/CEST)</option>
+                            <option value="Europe/Berlin">Berlin (CET/CEST)</option>
+                            <option value="Europe/Zurich">Zurich (CET/CEST)</option>
+                            <option value="Europe/Amsterdam">Amsterdam (CET/CEST)</option>
+                            <option value="Europe/Brussels">Brussels (CET/CEST)</option>
+                        </optgroup>
+                        <optgroup label="Australia">
+                            <option value="Australia/Sydney">Sydney (AEDT/AEST)</option>
+                            <option value="Australia/Melbourne">Melbourne (AEDT/AEST)</option>
+                            <option value="Australia/Perth">Perth (AWST)</option>
+                        </optgroup>
+                        <optgroup label="South America">
+                            <option value="America/Argentina/Buenos_Aires">Buenos Aires</option>
+                            <option value="America/Sao_Paulo">São Paulo</option>
+                        </optgroup>
+                        <optgroup label="South Africa">
+                            <option value="Africa/Johannesburg">Johannesburg (SAST)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Current Location Display -->
+                <div class="setting-section">
+                    <h3>Current Location</h3>
+                    <div class="current-location-display">
+                        <div class="location-info">
+                            <div class="location-name" id="current-location-name">Not set</div>
+                            <div class="coordinates" id="current-coordinates">Lat: --, Lon: --</div>
+                            <div class="timezone" id="current-timezone">Timezone: --</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="setting-section">
+                    <button class="ui-btn ui-btn-primary ui-btn-block" id="save-location-btn">Save Location</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

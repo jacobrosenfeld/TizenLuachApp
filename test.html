@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luach Board - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .test-result.pass {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .test-result.fail {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        #zmanim-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .zman-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+        .zman-time {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <h1>🕰️ Luach Board - Local Testing</h1>
+    
+    <div class="test-section">
+        <h2>📍 Location Service Tests</h2>
+        <div id="location-tests"></div>
+        
+        <h3>Test Coordinate Validation:</h3>
+        <input type="text" id="lat-test" placeholder="Latitude" value="40.7128">
+        <input type="text" id="lng-test" placeholder="Longitude" value="-74.0060">
+        <button onclick="testCoordinates()">Test Coordinates</button>
+        <div id="coord-result"></div>
+        
+        <h3>Test Zip Code Validation:</h3>
+        <input type="text" id="zip-test" placeholder="Zip Code" value="10001">
+        <button onclick="testZipCode()">Test Zip Code</button>
+        <div id="zip-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🕰️ Zmanim Calculation Tests</h2>
+        <div id="zmanim-tests"></div>
+        
+        <h3>Calculate Zmanim for Location:</h3>
+        <button onclick="calculateZmanim()">Calculate Today's Zmanim</button>
+        <div id="zmanim-display"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🗓️ Hebrew Date Tests</h2>
+        <div id="hebrew-tests"></div>
+        
+        <h3>Hebrew Date for Today:</h3>
+        <button onclick="testHebrewDate()">Get Hebrew Date</button>
+        <div id="hebrew-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🌐 Network Tests</h2>
+        <div id="network-tests"></div>
+        
+        <h3>Test Geocoding API:</h3>
+        <input type="text" id="geocode-test" placeholder="Zip Code" value="10001">
+        <button onclick="testGeocoding()">Test Geocoding</button>
+        <div id="geocode-result"></div>
+    </div>
+
+    <!-- Load our JavaScript modules -->
+    <script src="js/location-service.js"></script>
+    <script src="js/kosherjava-wrapper.js"></script>
+
+    <script>
+        // Test functions
+        function testResult(elementId, testName, success, message) {
+            const element = document.getElementById(elementId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${success ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `<strong>${testName}:</strong> ${message}`;
+            element.appendChild(resultDiv);
+        }
+
+        function testCoordinates() {
+            const lat = document.getElementById('lat-test').value;
+            const lng = document.getElementById('lng-test').value;
+            const result = locationService.validateCoordinates(lat, lng);
+            
+            const resultEl = document.getElementById('coord-result');
+            if (result.valid) {
+                resultEl.innerHTML = `<span class="success">✓ Valid coordinates: ${result.latitude}, ${result.longitude}</span>`;
+            } else {
+                resultEl.innerHTML = `<span class="error">✗ ${result.error}</span>`;
+            }
+        }
+
+        function testZipCode() {
+            const zip = document.getElementById('zip-test').value;
+            const result = locationService.validateZipCode(zip);
+            
+            const resultEl = document.getElementById('zip-result');
+            if (result.valid) {
+                resultEl.innerHTML = `<span class="success">✓ Valid zip code: ${result.zipCode}</span>`;
+            } else {
+                resultEl.innerHTML = `<span class="error">✗ ${result.error}</span>`;
+            }
+        }
+
+        function calculateZmanim() {
+            try {
+                // Set a test location (New York)
+                kosherJava.setLocation(40.7128, -74.0060, 'America/New_York');
+                
+                const today = new Date();
+                const zmanim = kosherJava.calculateZmanim(today);
+                
+                const display = document.getElementById('zmanim-display');
+                display.innerHTML = '';
+                
+                const zmanimList = [
+                    { name: 'Sunrise', time: zmanim.sunrise },
+                    { name: 'Sunset', time: zmanim.sunset },
+                    { name: 'Alos Hashachar', time: zmanim.alos },
+                    { name: 'Sof Zman Shma', time: zmanim.sofZmanShma },
+                    { name: 'Sof Zman Tfila', time: zmanim.sofZmanTfila },
+                    { name: 'Chatzos', time: zmanim.chatzos },
+                    { name: 'Mincha Gedola', time: zmanim.minchaGedola },
+                    { name: 'Tzeit Hakochavim', time: zmanim.tzeitHakochavim }
+                ];
+                
+                zmanimList.forEach(zman => {
+                    const div = document.createElement('div');
+                    div.className = 'zman-item';
+                    div.innerHTML = `
+                        <div>${zman.name}</div>
+                        <div class="zman-time">${kosherJava.formatTime(zman.time)}</div>
+                    `;
+                    display.appendChild(div);
+                });
+                
+            } catch (error) {
+                document.getElementById('zmanim-display').innerHTML = 
+                    `<span class="error">Error calculating zmanim: ${error.message}</span>`;
+            }
+        }
+
+        function testHebrewDate() {
+            try {
+                const today = new Date();
+                const hebrewDate = kosherJava.getHebrewDate(today);
+                
+                const resultEl = document.getElementById('hebrew-result');
+                if (hebrewDate && hebrewDate.formatted) {
+                    resultEl.innerHTML = `
+                        <div class="success">✓ Hebrew Date: ${hebrewDate.formatted}</div>
+                        <div>Day: ${hebrewDate.day} | Month: ${hebrewDate.month} | Year: ${hebrewDate.year}</div>
+                    `;
+                } else {
+                    resultEl.innerHTML = '<span class="error">✗ Failed to get Hebrew date</span>';
+                }
+            } catch (error) {
+                document.getElementById('hebrew-result').innerHTML = 
+                    `<span class="error">Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testGeocoding() {
+            const zip = document.getElementById('geocode-test').value;
+            const resultEl = document.getElementById('geocode-result');
+            
+            try {
+                resultEl.innerHTML = 'Testing geocoding...';
+                const result = await locationService.geocodeZipCode(zip);
+                
+                if (result.success) {
+                    resultEl.innerHTML = `
+                        <div class="success">✓ Geocoding successful!</div>
+                        <div>Location: ${result.data.name}</div>
+                        <div>Coordinates: ${result.data.latitude.toFixed(4)}, ${result.data.longitude.toFixed(4)}</div>
+                        <div>Source: ${result.data.source}</div>
+                    `;
+                } else {
+                    resultEl.innerHTML = `<span class="error">✗ ${result.error}</span>`;
+                }
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">Network error: ${error.message}</span>`;
+            }
+        }
+
+        // Run basic tests on page load
+        window.addEventListener('load', function() {
+            // Test location service initialization
+            testResult('location-tests', 'Location Service Initialization', 
+                locationService !== undefined, 
+                locationService ? 'Location service loaded successfully' : 'Failed to load location service');
+            
+            // Test KosherJava wrapper initialization
+            testResult('zmanim-tests', 'KosherJava Wrapper Initialization', 
+                kosherJava !== undefined && kosherJava.isAvailable(), 
+                kosherJava ? 'KosherJava wrapper loaded successfully' : 'Failed to load KosherJava wrapper');
+            
+            // Test Hebrew date functionality
+            testResult('hebrew-tests', 'Hebrew Date Functionality', 
+                typeof kosherJava.getHebrewDate === 'function', 
+                'Hebrew date function available');
+            
+            // Test network availability
+            testResult('network-tests', 'Network Connectivity', 
+                navigator.onLine, 
+                navigator.onLine ? 'Online - can test geocoding' : 'Offline - geocoding tests will fail');
+            
+            console.log('Local testing page loaded successfully');
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,60 @@
+{
+  "name": "tizen-luach-app",
+  "version": "1.0.0",
+  "description": "Jewish calendar and zmanim display board for Tizen devices",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "python3 -m http.server 8080",
+    "serve-alt": "python -m SimpleHTTPServer 8080",
+    "build": "echo \"Build process would go here\"",
+    "tizen-build": "tizen build-web",
+    "tizen-package": "tizen package",
+    "tizen-install": "tizen install"
+  },
+  "keywords": [
+    "tizen",
+    "jewish-calendar",
+    "zmanim",
+    "hebrew",
+    "luach",
+    "kosher-java"
+  ],
+  "author": "Luach Board Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/tizen-luach-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/tizen-luach-app/issues"
+  },
+  "homepage": "https://github.com/your-org/tizen-luach-app#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "Tizen >= 6.5"
+  ],
+  "tizen": {
+    "appId": "lLrD5TfPtR.TizenLuachApp",
+    "package": "lLrD5TfPtR",
+    "requiredVersion": "6.5",
+    "features": [
+      "web.service",
+      "location",
+      "location.gps",
+      "network.internet"
+    ],
+    "privileges": [
+      "location",
+      "internet",
+      "storage"
+    ]
+  }
+}
+

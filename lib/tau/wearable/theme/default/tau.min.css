@@ -1,0 +1,173 @@
+/* Minimal TAU CSS for Local Testing */
+
+/* Basic UI elements */
+.ui-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.ui-page-active {
+    display: block !important;
+}
+
+.ui-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    min-height: 50px;
+}
+
+.ui-header-right {
+    margin-left: auto;
+}
+
+.ui-title {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.ui-content {
+    padding: 20px;
+    overflow-y: auto;
+    height: calc(100vh - 70px);
+}
+
+/* Button styles */
+.ui-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.ui-btn:hover {
+    background: #0056b3;
+}
+
+.ui-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.ui-btn-icon {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ui-btn-back {
+    background: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.ui-btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.ui-btn-block {
+    width: 100%;
+    display: block;
+}
+
+/* Icons */
+.ui-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+}
+
+.ui-icon:before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.ui-icon-setting:before {
+    content: '⚙️';
+}
+
+.ui-icon-refresh:before {
+    content: '🔄';
+}
+
+.ui-icon-back:before {
+    content: '←';
+}
+
+/* Form elements */
+.ui-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.ui-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+}
+
+/* Radio buttons */
+.ui-radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.ui-radio input[type="radio"] {
+    display: none;
+}
+
+.ui-radio-indicator {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    position: relative;
+}
+
+.ui-radio input[type="radio"]:checked + .ui-radio-indicator {
+    background: #007bff;
+}
+
+.ui-radio input[type="radio"]:checked + .ui-radio-indicator:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+}
+
