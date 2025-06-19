@@ -147,12 +147,13 @@ body {
 
 .time-item {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
-    padding: 8px 12px;
-    background: rgba(236, 240, 241, 0.5);
-    border-radius: 8px;
-    transition: background-color 0.3s;
+    justify-content: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+    gap: 0.75rem;
 }
 
 .time-item:hover {
@@ -160,12 +161,36 @@ body {
 }
 
 .time {
-    font-size: 18px;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: unset;
+    min-width: 3.5rem;
+    font-size: clamp(1rem, 4vw, 1.375rem);
     font-weight: bold;
+    color: #1e3c72;
+    text-align: center;
+    flex: 1 1 5.5rem;
+    margin: 0;
+    transition: font-size 0.2s;
+}
+
+.label-he, .label-en {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: unset;
+    min-width: 4.5rem;
+    flex: 0 0 auto;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.label-he {
+    direction: rtl;
+    font-family: 'David', 'Times New Roman', serif;
+    font-size: 18px;
     color: #2c3e50;
-    min-width: 60px;
     text-align: right;
-    font-family: 'Courier New', monospace;
+    flex: 1 1 0;
 }
 
 .label {
@@ -179,10 +204,10 @@ body {
 }
 
 .label-en {
-    font-size: 12px;
-    color: #7f8c8d;
-    margin-top: 2px;
-    font-style: italic;
+    font-size: 14px;
+    color: #555;
+    text-align: left;
+    flex: 1 1 0;
 }
 
 /* Color coding for different time periods */
@@ -491,6 +516,20 @@ body {
     .input-group label {
         min-width: auto;
         margin-bottom: 5px;
+    }
+}
+
+@media (max-width: 500px) {
+    .label-he, .label-en {
+        font-size: 0.95rem;
+        min-width: 3.2rem;
+    }
+    .time {
+        font-size: clamp(0.9rem, 5vw, 1.1rem);
+        min-width: 2.5rem;
+    }
+    .time-item {
+        gap: 0.3rem;
     }
 }
 
