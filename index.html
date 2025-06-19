@@ -12,6 +12,16 @@
     <script src="js/location-service.js"></script>
     <script src="js/luach-board.js"></script>
     <script src="js/kosher-zmanim-debug.js"></script>
+    <script>
+      // Patch: Always show seconds for zmanim display
+      // This ensures any custom widgets or legacy code using kosherJava.formatTime will show seconds
+      if (window.kosherJava) {
+        const origFormatTime = window.kosherJava.formatTime.bind(window.kosherJava);
+        window.kosherJava.formatTime = function(date, format = '12h', showSeconds) {
+          return origFormatTime(date, format, true);
+        };
+      }
+    </script>
 </head>
 <body>
     <!-- Main Luach Display Page -->

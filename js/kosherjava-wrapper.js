@@ -235,7 +235,7 @@ class KosherJavaWrapper {
     /**
      * Format time for display
      */
-    formatTime(date, format = '12h') {
+    formatTime(date, format = '12h', showSeconds = true) {
         // Handle Luxon DateTime
         if (date && typeof date === 'object' && typeof date.toJSDate === 'function') {
             date = date.toJSDate();
@@ -247,16 +247,16 @@ class KosherJavaWrapper {
         try {
             // Convert UTC time to local timezone for display
             const timezone = this.location?.timezone || 'America/New_York';
-            
+            const secondOption = showSeconds ? { second: '2-digit' } : {};
             if (timezone && timezone !== 'auto') {
                 // Use the specified timezone for formatting
                 const options = {
                     timeZone: timezone,
                     hour: format === '12h' ? 'numeric' : '2-digit',
                     minute: '2-digit',
-                    hour12: format === '12h'
+                    hour12: format === '12h',
+                    ...secondOption
                 };
-                
                 return date.toLocaleTimeString('en-US', options);
             } else {
                 // Use local timezone
@@ -264,12 +264,14 @@ class KosherJavaWrapper {
                     return date.toLocaleTimeString('en-US', {
                         hour: 'numeric',
                         minute: '2-digit',
+                        second: showSeconds ? '2-digit' : undefined,
                         hour12: true
                     });
                 } else {
                     return date.toLocaleTimeString('en-US', {
                         hour: '2-digit',
                         minute: '2-digit',
+                        second: showSeconds ? '2-digit' : undefined,
                         hour12: false
                     });
                 }

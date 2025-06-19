@@ -196,7 +196,7 @@ class LuachBoardApp {
             }
             console.log(`Element: ${elementId}, Raw:`, time, 'Type:', typeof time, 'DateObj:', dateObj, 'Valid:', dateObj instanceof Date && !isNaN(dateObj.getTime()));
             if (element) {
-                element.textContent = kosherJava.formatTime(dateObj);
+                element.textContent = kosherJava.formatTime(dateObj, '12h', true);
             }
         }
     }
@@ -443,7 +443,7 @@ class LuachBoardApp {
                             return;
                         }
                     }
-                    locationData = this.pendingLocation;
+                    locationData = this
                 }
             } else if (selectedMethod === 'coordinates') {
                 const latInput = document.getElementById('latitude-input');
