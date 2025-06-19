@@ -132,9 +132,9 @@ class KosherJavaWrapper {
         const targetDate = new Date(date);
         
         // Julian day calculation
-        const year = targetDate.getFullYear();
-        const month = targetDate.getMonth() + 1;
-        const day = targetDate.getDate();
+        const year = targetDate.getUTCFullYear();
+        const month = targetDate.getUTCMonth() + 1;
+        const day = targetDate.getUTCDate();
         
         const a = Math.floor((14 - month) / 12);
         const y = year - a;
@@ -155,19 +155,19 @@ class KosherJavaWrapper {
         const latRad = latitude * Math.PI / 180;
         const hourAngle = Math.acos(-Math.tan(latRad) * Math.tan(delta));
         
-        // Calculate solar noon in local solar time
-        const solarNoon = 12 - longitude / 15;
-        const sunriseHour = solarNoon - hourAngle * 12 / Math.PI;
-        const sunsetHour = solarNoon + hourAngle * 12 / Math.PI;
+        // Calculate solar noon in UTC
+        const solarNoonUTC = 12 - longitude / 15;
+        const sunriseHourUTC = solarNoonUTC - hourAngle * 12 / Math.PI;
+        const sunsetHourUTC = solarNoonUTC + hourAngle * 12 / Math.PI;
         
-        // Create Date objects in local time for the given date
-        const sunrise = new Date(year, month - 1, day, 
-            Math.floor(sunriseHour), 
-            Math.round((sunriseHour % 1) * 60), 0, 0);
+        // Create Date objects in UTC
+        const sunrise = new Date(Date.UTC(year, month - 1, day, 
+            Math.floor(sunriseHourUTC), 
+            Math.round((sunriseHourUTC % 1) * 60), 0, 0));
         
-        const sunset = new Date(year, month - 1, day, 
-            Math.floor(sunsetHour), 
-            Math.round((sunsetHour % 1) * 60), 0, 0);
+        const sunset = new Date(Date.UTC(year, month - 1, day, 
+            Math.floor(sunsetHourUTC), 
+            Math.round((sunsetHourUTC % 1) * 60), 0, 0));
         
         return { sunrise, sunset };
     }
@@ -327,18 +327,34 @@ class KosherJavaWrapper {
         }
 
         try {
-            if (format === '12h') {
-                return date.toLocaleTimeString('en-US', {
-                    hour: 'numeric',
+            // Convert UTC time to local timezone for display
+            const timezone = this.location?.timezone || 'America/New_York';
+            
+            if (timezone && timezone !== 'auto') {
+                // Use the specified timezone for formatting
+                const options = {
+                    timeZone: timezone,
+                    hour: format === '12h' ? 'numeric' : '2-digit',
                     minute: '2-digit',
-                    hour12: true
-                });
+                    hour12: format === '12h'
+                };
+                
+                return date.toLocaleTimeString('en-US', options);
             } else {
-                return date.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                });
+                // Use local timezone
+                if (format === '12h') {
+                    return date.toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                } else {
+                    return date.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+                }
             }
         } catch (error) {
             console.error('Error formatting time:', error);
