@@ -338,12 +338,17 @@ class LuachBoardApp {
         const englishDateEl = document.getElementById('english-date');
 
         if (englishDateEl) {
-            englishDateEl.textContent = date.toLocaleDateString('en-US', {
+            let enDate = date.toLocaleDateString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
+            // Replace 'Saturday' with 'Shabbos'
+            if (enDate.startsWith('Saturday')) {
+                enDate = enDate.replace('Saturday', 'Shabbos');
+            }
+            englishDateEl.textContent = enDate;
         }
 
         if (hebrewDateEl) {

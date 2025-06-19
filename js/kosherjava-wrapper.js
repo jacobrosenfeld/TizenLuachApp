@@ -184,8 +184,12 @@ class KosherJavaWrapper {
             const formatter = new HebrewDateFormatter();
             formatter.setHebrewFormat(true); // Output in Hebrew
             // Get Hebrew day of week
-            const hebrewDays = ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'יום שבת'];
-            const dayOfWeek = hebrewDays[jewishCal.getDayOfWeek() - 1];
+            const hebrewDays = ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'שבת'];
+            let dayOfWeek = hebrewDays[jewishCal.getDayOfWeek() - 1];
+            // If Shabbat, do not prefix with 'יום'
+            if (jewishCal.getDayOfWeek() === 7) {
+                dayOfWeek = 'שבת';
+            }
             return {
                 formatted: `${dayOfWeek}, ${formatter.format(jewishCal)}`
             };
