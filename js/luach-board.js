@@ -410,31 +410,41 @@ class LuachBoardApp {
             if (selectedMethod === 'zipcode') {
                 const zipInput = document.getElementById('zipcode-input');
                 const zip = zipInput.value.trim();
-                const validation = locationService.validateZipCode(zip);
-                if (!validation.valid) {
-                    this.showError(validation.error);
-                    return;
-                }
-                // If no pendingLocation or pendingLocation doesn't match input, do lookup now
-                if (!this.pendingLocation || this.pendingLocation.method !== 'zipcode' || this.pendingLocation.name !== zip) {
-                    // Attempt lookup
-                    const geocodeBtn = document.getElementById('geocode-btn');
-                    if (geocodeBtn) geocodeBtn.disabled = true;
-                    const result = await locationService.geocodeZipCode(validation.zipCode);
-                    if (geocodeBtn) geocodeBtn.disabled = false;
-                    if (result.success) {
-                        this.pendingLocation = {
-                            name: result.data.name,
-                            latitude: result.data.latitude,
-                            longitude: result.data.longitude,
-                            method: 'zipcode'
-                        };
+                if (!zip) {
+                    // No zip entered: if current location exists, allow save
+                    if (locationService.hasLocation()) {
+                        locationData = locationService.getCurrentLocation();
                     } else {
-                        this.showError(result.error || 'Unable to lookup zip code');
+                        this.showError('Please enter a zip code or set a location');
                         return;
                     }
+                } else {
+                    const validation = locationService.validateZipCode(zip);
+                    if (!validation.valid) {
+                        this.showError(validation.error);
+                        return;
+                    }
+                    // If no pendingLocation or pendingLocation doesn't match input, do lookup now
+                    if (!this.pendingLocation || this.pendingLocation.method !== 'zipcode' || this.pendingLocation.name !== zip) {
+                        // Attempt lookup
+                        const geocodeBtn = document.getElementById('geocode-btn');
+                        if (geocodeBtn) geocodeBtn.disabled = true;
+                        const result = await locationService.geocodeZipCode(validation.zipCode);
+                        if (geocodeBtn) geocodeBtn.disabled = false;
+                        if (result.success) {
+                            this.pendingLocation = {
+                                name: result.data.name,
+                                latitude: result.data.latitude,
+                                longitude: result.data.longitude,
+                                method: 'zipcode'
+                            };
+                        } else {
+                            this.showError(result.error || 'Unable to lookup zip code');
+                            return;
+                        }
+                    }
+                    locationData = this.pendingLocation;
                 }
-                locationData = this.pendingLocation;
             } else if (selectedMethod === 'coordinates') {
                 const latInput = document.getElementById('latitude-input');
                 const lngInput = document.getElementById('longitude-input');
