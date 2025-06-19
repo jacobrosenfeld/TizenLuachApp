@@ -352,6 +352,12 @@ body {
     background: white;
 }
 
+#custom-title-input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .ui-btn {
     padding: 10px 20px;
     border: none;
