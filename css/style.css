@@ -152,12 +152,18 @@ body {
 }
 
 .time {
-    font-size: 18px;
-    font-weight: bold;
-    color: #2c3e50;
+    color: #000 !important;
+    background: #fffde7 !important;
+    border: 2px solid #f39c12 !important;
+    font-size: 1.5em !important;
+    font-weight: bold !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    display: inline-block !important;
     min-width: 60px;
-    text-align: right;
-    font-family: 'Courier New', monospace;
+    text-align: center;
+    margin: 2px 0;
+    z-index: 1000;
 }
 
 .label {

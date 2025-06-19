@@ -143,23 +143,19 @@ class LuachBoardApp {
             }
 
             const location = locationService.getCurrentLocation();
-            
-            // Set location in kosher java wrapper
             kosherJava.setLocation(
                 location.latitude,
                 location.longitude,
                 location.timezone
             );
 
-            // Calculate zmanim for today
             const today = new Date();
-            const zmanim = kosherJava.calculateZmanim(today);
-            
-            // Update display
+            // Wait for kosherJava to be ready before calculating zmanim
+            await kosherJava.ready();
+            const zmanim = await kosherJava.calculateZmanim(today);
             this.updateZmanimDisplay(zmanim);
             this.updateDateDisplay(today);
             this.updateLastUpdated();
-
         } catch (error) {
             console.error('Error refreshing zmanim:', error);
             this.showError('Error calculating zmanim');
@@ -175,6 +171,7 @@ class LuachBoardApp {
      * Update the zmanim display with calculated times
      */
     updateZmanimDisplay(zmanim) {
+        console.log('updateZmanimDisplay received:', zmanim);
         const timeElements = {
             'sunrise': zmanim.sunrise,
             'sunset': zmanim.sunset,
@@ -193,8 +190,13 @@ class LuachBoardApp {
 
         for (const [elementId, time] of Object.entries(timeElements)) {
             const element = document.getElementById(elementId);
+            let dateObj = time;
+            if (typeof time === 'string') {
+                dateObj = new Date(time);
+            }
+            console.log(`Element: ${elementId}, Raw:`, time, 'Type:', typeof time, 'DateObj:', dateObj, 'Valid:', dateObj instanceof Date && !isNaN(dateObj.getTime()));
             if (element) {
-                element.textContent = kosherJava.formatTime(time);
+                element.textContent = kosherJava.formatTime(dateObj);
             }
         }
     }

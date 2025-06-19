@@ -12,8 +12,23 @@ class KosherJavaWrapper {
         this.jewishCalendar = null;
         this.hebrewDateFormatter = null;
         this.initialized = false;
+        this._readyPromise = new Promise((resolve) => {
+            if (window.KosherZmanim) {
+                this.initialized = true;
+                resolve();
+            } else {
+                document.addEventListener('kosher-zmanim-loaded', () => {
+                    this.initialized = true;
+                    resolve();
+                }, { once: true });
+            }
+        });
         
         this.init();
+    }
+
+    async ready() {
+        await this._readyPromise;
     }
 
     /**
@@ -56,120 +71,41 @@ class KosherJavaWrapper {
     }
 
     /**
-     * Calculate all zmanim for a given date
+     * Calculate all zmanim for a given date using kosher-zmanim
      */
-    calculateZmanim(date = new Date()) {
+    async calculateZmanim(date = new Date()) {
+        await this.ready();
         if (!this.location) {
             throw new Error('Location not set');
         }
-
-        try {
-            // For demonstration purposes, we'll use simplified calculations
-            // In production, you would use actual KosherJava methods
-            const zmanim = this.calculateZmanimSimulated(date);
-            return zmanim;
-        } catch (error) {
-            console.error('Error calculating zmanim:', error);
-            throw error;
+        if (!window.KosherZmanim) {
+            throw new Error('kosher-zmanim library not loaded');
         }
-    }
-
-    /**
-     * Simplified zmanim calculations for demonstration
-     * Replace this with actual KosherJava calculations in production
-     */
-    calculateZmanimSimulated(date) {
-        const { latitude, longitude, timezone } = this.location;
-        
-        // Get sunrise and sunset using a simplified calculation
-        const { sunrise, sunset } = this.calculateSunriseSunset(date, latitude, longitude);
-        
-        // Calculate various zmanim based on sunrise/sunset
-        const dayLength = (sunset - sunrise);
-        const halfDay = dayLength / 2;
-        const quarterDay = dayLength / 4;
-        
-        // Shacharit times
-        const alos = new Date(sunrise.getTime() - 72 * 60000); // 72 minutes before sunrise
-        const misheyakir = new Date(sunrise.getTime() - 30 * 60000); // 30 minutes before sunrise
-        const sofZmanShma = new Date(sunrise.getTime() + dayLength * 0.25); // 1/4 of day after sunrise
-        const sofZmanTfila = new Date(sunrise.getTime() + dayLength * 0.333); // 1/3 of day after sunrise
-        
-        // Midday and afternoon
-        const chatzos = new Date(sunrise.getTime() + halfDay);
-        const minchaGedola = new Date(chatzos.getTime() + 30 * 60000); // 30 minutes after chatzos
-        const minchaKetana = new Date(chatzos.getTime() + dayLength * 0.375); // 2.5 hours after chatzos
-        const plagHamincha = new Date(sunset.getTime() - dayLength * 0.208); // 1.25 hours before sunset
-        
-        // Evening times
-        const beinHashmashos = new Date(sunset.getTime() + 13.5 * 60000); // 13.5 minutes after sunset
-        const tzeitHakochavim = new Date(sunset.getTime() + 42 * 60000); // 42 minutes after sunset
-        const tzeit72 = new Date(sunset.getTime() + 72 * 60000); // 72 minutes after sunset
-
-        return {
-            sunrise,
-            sunset,
-            alos,
-            misheyakir,
-            sofZmanShma,
-            sofZmanTfila,
-            chatzos,
-            minchaGedola,
-            minchaKetana,
-            plagHamincha,
-            beinHashmashos,
-            tzeitHakochavim,
-            tzeit72
+        const { latitude, longitude, timezone, elevation } = this.location;
+        // Use ComplexZmanimCalendar for advanced zmanim calculations
+        const GeoLocation = window.KosherZmanim.GeoLocation;
+        const ComplexZmanimCalendar = window.KosherZmanim.ComplexZmanimCalendar;
+        const geoLocation = new GeoLocation('Location', latitude, longitude, elevation || 0, timezone);
+        const zmanimCalendar = new ComplexZmanimCalendar(geoLocation);
+        zmanimCalendar.setDate(date);
+        // Return all available zmanim
+        const zmanim = {
+            alos: zmanimCalendar.getAlosHashachar(),
+            misheyakir: zmanimCalendar.getMisheyakir10Point2Degrees(),
+            sunrise: zmanimCalendar.getSunrise(),
+            sofZmanShma: zmanimCalendar.getSofZmanShmaMGA(),
+            sofZmanTfila: zmanimCalendar.getSofZmanTfilaMGA(),
+            chatzos: zmanimCalendar.getChatzos(),
+            minchaGedola: zmanimCalendar.getMinchaGedola(),
+            minchaKetana: zmanimCalendar.getMinchaKetana(),
+            plagHamincha: zmanimCalendar.getPlagHamincha(),
+            sunset: zmanimCalendar.getSunset(),
+            tzeitHakochavim: zmanimCalendar.getTzais(),
+            tzeit72: zmanimCalendar.getTzais72(),
+            beinHashmashos: (typeof zmanimCalendar.getBainHasmashos === 'function') ? zmanimCalendar.getBainHasmashos() : undefined
         };
-    }
-
-    /**
-     * Calculate sunrise and sunset times
-     * This is a simplified calculation - production should use KosherJava's precise algorithms
-     */
-    calculateSunriseSunset(date, latitude, longitude) {
-        // Create a date object for the calculation date
-        const targetDate = new Date(date);
-        
-        // Julian day calculation
-        const year = targetDate.getUTCFullYear();
-        const month = targetDate.getUTCMonth() + 1;
-        const day = targetDate.getUTCDate();
-        
-        const a = Math.floor((14 - month) / 12);
-        const y = year - a;
-        const m = month + 12 * a - 3;
-        
-        const julianDay = day + Math.floor((153 * m + 2) / 5) + 365 * y + 
-                         Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
-        
-        // Solar calculations (simplified)
-        const n = julianDay - 2451545.0;
-        const L = (280.460 + 0.9856474 * n) % 360;
-        const g = Math.PI / 180 * ((357.528 + 0.9856003 * n) % 360);
-        const lambda = Math.PI / 180 * (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g));
-        
-        const alpha = Math.atan2(Math.cos(23.439 * Math.PI / 180) * Math.sin(lambda), Math.cos(lambda));
-        const delta = Math.asin(Math.sin(23.439 * Math.PI / 180) * Math.sin(lambda));
-        
-        const latRad = latitude * Math.PI / 180;
-        const hourAngle = Math.acos(-Math.tan(latRad) * Math.tan(delta));
-        
-        // Calculate solar noon in UTC
-        const solarNoonUTC = 12 - longitude / 15;
-        const sunriseHourUTC = solarNoonUTC - hourAngle * 12 / Math.PI;
-        const sunsetHourUTC = solarNoonUTC + hourAngle * 12 / Math.PI;
-        
-        // Create Date objects in UTC
-        const sunrise = new Date(Date.UTC(year, month - 1, day, 
-            Math.floor(sunriseHourUTC), 
-            Math.round((sunriseHourUTC % 1) * 60), 0, 0));
-        
-        const sunset = new Date(Date.UTC(year, month - 1, day, 
-            Math.floor(sunsetHourUTC), 
-            Math.round((sunsetHourUTC % 1) * 60), 0, 0));
-        
-        return { sunrise, sunset };
+        console.log('Zmanim calculated:', zmanim);
+        return zmanim;
     }
 
     /**
@@ -322,6 +258,10 @@ class KosherJavaWrapper {
      * Format time for display
      */
     formatTime(date, format = '12h') {
+        // Handle Luxon DateTime
+        if (date && typeof date === 'object' && typeof date.toJSDate === 'function') {
+            date = date.toJSDate();
+        }
         if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
             return '--:--';
         }
