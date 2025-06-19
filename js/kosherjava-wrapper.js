@@ -276,8 +276,8 @@ class KosherJavaWrapper {
             day: this.numberToHebrew(day),
             month: hebrewMonths[monthIndex],
             year: this.numberToHebrew(year),
-            dayOfWeek: hebrewDaysOfWeek[dayOfWeek],
-            formatted: `${hebrewDaysOfWeek[dayOfWeek]}, ${this.numberToHebrew(day)} ${hebrewMonths[monthIndex]} ${this.numberToHebrew(year)}`
+            dayOfWeek: `יום ${hebrewDaysOfWeek[dayOfWeek]}`,
+            formatted: `יום ${hebrewDaysOfWeek[dayOfWeek]}, ${this.numberToHebrew(day)} ${hebrewMonths[monthIndex]} ${this.numberToHebrew(year)}`
         };
     }
 
