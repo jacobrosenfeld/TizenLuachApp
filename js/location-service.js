@@ -70,10 +70,34 @@ class LocationService {
     }
 
     /**
-     * Geocode a zip code to get lat/lng coordinates
-     * Uses multiple fallback services for reliability
+     * Geocode a zip code to get lat/lng coordinates (offline/local first)
+     * Uses local zip code database if available, otherwise falls back to API
      */
     async geocodeZipCode(zipCode) {
+        // Try local lookup first
+        if (!this._zipcodes) {
+            // Lazy-load the zip code data (replace with full file for production)
+            try {
+                // For demo, use a small sample. For production, load a full JSON file.
+                this._zipcodes = (await import('./zipcodes-sample.js')).US_ZIPCODES;
+            } catch (e) {
+                this._zipcodes = {};
+            }
+        }
+        const zip = zipCode.trim();
+        if (this._zipcodes[zip]) {
+            const entry = this._zipcodes[zip];
+            return {
+                success: true,
+                data: {
+                    name: `${entry.city}, ${entry.state}`,
+                    latitude: entry.lat,
+                    longitude: entry.lng,
+                    source: 'LocalZipDB'
+                }
+            };
+        }
+
         try {
             // First try: Free service (nominatim)
             const nominatimResult = await this.geocodeWithNominatim(zipCode);
