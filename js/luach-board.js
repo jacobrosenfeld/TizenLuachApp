@@ -313,17 +313,23 @@ class LuachBoardApp {
             const label = document.createElement('label');
             label.textContent = zman.label;
             label.style.flex = '1';
+            // Switch UI
+            const switchLabel = document.createElement('label');
+            switchLabel.className = 'switch';
             const input = document.createElement('input');
             input.type = 'checkbox';
-            input.checked = !!this.zmanimVisibility[zman.id];
-            input.style.marginLeft = '8px';
+            input.checked = this.zmanimVisibility[zman.id] !== false; // default ON
             input.addEventListener('change', () => {
                 this.zmanimVisibility[zman.id] = input.checked;
                 this.saveZmanimVisibility(this.zmanimVisibility);
                 this.refreshZmanim();
             });
+            const slider = document.createElement('span');
+            slider.className = 'slider';
+            switchLabel.appendChild(input);
+            switchLabel.appendChild(slider);
             div.appendChild(label);
-            div.appendChild(input);
+            div.appendChild(switchLabel);
             container.appendChild(div);
         });
     }
@@ -417,6 +423,7 @@ class LuachBoardApp {
         window.ZMANIM_LIST.forEach(z => {
             const element = document.getElementById(z.id);
             if (element) {
+                // Only show if enabled in settings
                 if (this.zmanimVisibility && this.zmanimVisibility[z.id] === false) {
                     element.parentElement.style.display = 'none';
                 } else {
@@ -427,6 +434,13 @@ class LuachBoardApp {
                         element.textContent = kosherJava.formatTime(dateObj, '12h', this.showSeconds);
                     }
                 }
+            }
+        });
+        // Hide any time-item not in ZMANIM_LIST
+        document.querySelectorAll('.time-item .time').forEach(el => {
+            const id = el.id;
+            if (!window.ZMANIM_LIST.find(z => z.id === id)) {
+                el.parentElement.style.display = 'none';
             }
         });
 

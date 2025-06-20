@@ -522,6 +522,7 @@ body {
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #ecf0f1;
+    flex: auto;
 }
 
 .zmanim-toggle-row:last-child {
@@ -530,12 +531,50 @@ body {
 
 .zmanim-toggle-row label {
   font-size: 1em;
-  flex: 1;
 }
 
-.zmanim-toggle-row input[type="checkbox"] {
-  transform: scale(1.2);
+.zmanim-toggle-row .switch {
+  position: relative;
+  display: inline-block;
+  width: 2rem;
+  height: 18px;
   margin-left: 8px;
+}
+
+.zmanim-toggle-row .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.zmanim-toggle-row .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .2s;
+  border-radius: 18px;
+  width: 2rem;
+}
+
+.zmanim-toggle-row .slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .2s;
+  border-radius: 50%;
+}
+
+.zmanim-toggle-row .switch input:checked + .slider {
+  background-color: #2196F3;
+}
+
+.zmanim-toggle-row .switch input:checked + .slider:before {
+  transform: translateX(calc(2rem - 18px));
 }
 
 /* Utility classes */
