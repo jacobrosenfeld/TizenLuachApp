@@ -671,7 +671,7 @@ class LuachBoardApp {
 
                 this.updateCurrentLocationSettings();
                 this.showMainPage();
-                this.showSuccess('Location saved successfully', locationData);
+                this.showSuccess('Settings saved successfully', locationData);
             } else {
                 this.showError('Failed to save location');
             }
