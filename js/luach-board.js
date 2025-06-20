@@ -313,7 +313,6 @@ class LuachBoardApp {
             'mincha-gedola': zmanim.minchaGedola,
             'mincha-ketana': zmanim.minchaKetana,
             'plag-hamincha': zmanim.plagHamincha,
-            'bein-hashmashos': zmanim.beinHashmashos,
             'tzeit-hakochavim': zmanim.tzeitHakochavim,
             'tzeit-72': zmanim.tzeit72
         };

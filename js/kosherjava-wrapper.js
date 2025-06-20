@@ -102,7 +102,6 @@ class KosherJavaWrapper {
             sunset: zmanimCalendar.getSunset(),
             tzeitHakochavim: zmanimCalendar.getTzais(),
             tzeit72: zmanimCalendar.getTzais72(),
-            beinHashmashos: (typeof zmanimCalendar.getBainHasmashos === 'function') ? zmanimCalendar.getBainHasmashos() : undefined
         };
         console.log('Zmanim calculated:', zmanim);
         return zmanim;
