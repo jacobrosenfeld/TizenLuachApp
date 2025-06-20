@@ -95,6 +95,13 @@ class LuachBoardApp {
         localStorage.setItem('luach-zmanim-visibility', JSON.stringify(vis));
     }
 
+    loadTemplateSetting() {
+        return localStorage.getItem('luach-template') || 'basic';
+    }
+    saveTemplateSetting(val) {
+        localStorage.setItem('luach-template', val);
+    }
+
     /**
      * Set up all event listeners
      */
@@ -662,6 +669,16 @@ class LuachBoardApp {
         const customTitleInput = document.getElementById('custom-title-input');
         if (customTitleInput) {
             customTitleInput.value = locationService.getCustomTitle();
+        }
+
+        // Set template select to current value
+        const templateSelect = document.getElementById('template-select');
+        if (templateSelect) {
+            templateSelect.value = this.loadTemplateSetting();
+            templateSelect.addEventListener('change', (e) => {
+                this.saveTemplateSetting(e.target.value);
+                // Optionally, trigger a board re-render here for live preview
+            });
         }
 
         // Refresh zmanim toggles in settings
