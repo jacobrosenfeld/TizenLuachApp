@@ -10,6 +10,7 @@ class LuachBoardApp {
         this.autoRefreshMinutes = this.loadAutoRefreshSetting();
         this.showSeconds = this.loadShowSecondsSetting();
         this.allowZmanimLookups = this.loadAllowZmanimLookupsSetting();
+        this.debugMode = this.loadDebugModeSetting();
         this.selectedDate = new Date();
         
         // Wait for DOM to be ready
@@ -58,6 +59,13 @@ class LuachBoardApp {
     }
     saveAllowZmanimLookupsSetting(val) {
         localStorage.setItem('luach-allow-zmanim-lookups', val ? 'true' : 'false');
+    }
+
+    loadDebugModeSetting() {
+        return localStorage.getItem('luach-debug') === 'true';
+    }
+    saveDebugModeSetting(val) {
+        localStorage.setItem('luach-debug', val ? 'true' : 'false');
     }
 
     /**
@@ -158,6 +166,17 @@ class LuachBoardApp {
             });
         }
 
+        // Debug Mode toggle
+        const debugModeBtn = document.getElementById('debug-mode-btn');
+        if (debugModeBtn) {
+            this.updateDebugModeButton(debugModeBtn);
+            debugModeBtn.addEventListener('click', () => {
+                this.debugMode = !this.debugMode;
+                this.updateDebugModeButton(debugModeBtn);
+                // Do not save or reload here; wait for Save Settings
+            });
+        }
+
         // Date picker and arrows
         document.addEventListener('click', (e) => {
             if (e.target && e.target.id === 'zmanim-date-left') {
@@ -187,6 +206,11 @@ class LuachBoardApp {
     updateAllowLookupsButton(btn) {
         btn.textContent = this.allowZmanimLookups ? 'Disable Zmanim Lookups' : 'Allow Zmanim Lookups';
         btn.classList.toggle('active', this.allowZmanimLookups);
+    }
+
+    updateDebugModeButton(btn) {
+        btn.textContent = this.debugMode ? 'Disable Debug Mode' : 'Enable Debug Mode';
+        btn.classList.toggle('active', this.debugMode);
     }
 
     renderDatePickerAndArrows() {
@@ -636,6 +660,14 @@ class LuachBoardApp {
                 }
                 // Update header title immediately
                 this.updateHeaderTitle();
+
+                // Save debug mode setting
+                this.saveDebugModeSetting(this.debugMode);
+                // Optionally, reload if debug mode changed
+                if (this.debugMode !== (localStorage.getItem('luach-debug') === 'true')) {
+                    location.reload();
+                    return;
+                }
 
                 this.updateCurrentLocationSettings();
                 this.showMainPage();
