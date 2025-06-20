@@ -565,6 +565,24 @@ class LuachBoardApp {
         const hebrewDateEl = document.getElementById('hebrew-date');
         const englishDateEl = document.getElementById('english-date');
 
+        // Determine if we are after sunset for the selected date
+        let useNextJewishDay = false;
+        let sunset = null;
+        if (kosherJava.lastCalculatedZmanim && kosherJava.lastCalculatedZmanim.sunset) {
+            sunset = kosherJava.lastCalculatedZmanim.sunset;
+            if (typeof sunset === 'string') sunset = new Date(sunset);
+            const now = new Date();
+            if (date.toDateString() === now.toDateString() && now > sunset) {
+                useNextJewishDay = true;
+            }
+        }
+
+        // For Hebrew date, use the next day if after sunset
+        let jewishDateToShow = new Date(date);
+        if (useNextJewishDay) {
+            jewishDateToShow.setDate(jewishDateToShow.getDate() + 1);
+        }
+
         if (labelLang === 'en') {
             if (englishDateEl) englishDateEl.style.display = '';
             if (hebrewDateEl) hebrewDateEl.style.display = 'none';
@@ -576,6 +594,7 @@ class LuachBoardApp {
             if (hebrewDateEl) hebrewDateEl.style.display = '';
         }
 
+        // Always show the civil (English) date for the selected date
         if (englishDateEl) {
             let enDate = date.toLocaleDateString('en-US', {
                 weekday: 'long',
@@ -590,10 +609,17 @@ class LuachBoardApp {
             englishDateEl.textContent = enDate;
         }
 
+        // Only the Hebrew date changes after sunset
         if (hebrewDateEl) {
-            const hebrewDate = kosherJava.getHebrewDate(date);
+            const hebrewDate = kosherJava.getHebrewDate(jewishDateToShow);
             if (hebrewDate && hebrewDate.formatted) {
-                hebrewDateEl.textContent = hebrewDate.formatted;
+                let hebText = hebrewDate.formatted;
+                if (useNextJewishDay) {
+                    // Add 'ליל' prefix and day name
+                    const dayName = kosherJava.getHebrewDayName(jewishDateToShow);
+                    hebText = `ליל ${dayName} (${hebText})`;
+                }
+                hebrewDateEl.textContent = hebText;
             }
         }
     }
