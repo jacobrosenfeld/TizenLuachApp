@@ -139,15 +139,36 @@ A comprehensive Jewish calendar and zmanim display board built for Tizen devices
 
 ```
 TizenLuachApp/
-├── index.html              # Main UI structure
-├── config.xml              # Tizen app configuration
+├── index.html                  # Main UI structure
+├── config.xml                  # Tizen app configuration
+├── package.json                # Project metadata and dependencies
 ├── css/
-│   └── style.css           # Styling and responsive design
+│   └── style.css               # Styling and responsive design
 ├── js/
-│   ├── location-service.js # Location management and geocoding
-│   ├── kosherjava-wrapper.js # Zmanim calculations interface
-│   └── luach-board.js      # Main application logic
-└── lib/                    # Tizen UI framework (TAU)
+│   ├── kosher-zmanim-debug.js  # Debug logging for zmanim calculations
+│   ├── kosher-zmanim-loader.js # Loader for zmanim calculation scripts
+│   ├── kosher-zmanim.min.js    # Main zmanim calculation library
+│   ├── kosherjava-wrapper.js   # Zmanim calculations interface
+│   ├── location-service.js     # Location management and geocoding
+│   ├── luach-board.js          # Main application logic and UI handlers
+│   ├── zipcodes.js             # US zip code data and lookup
+│   ├── zipcodes-sample.js      # Sample zip code data (for testing)
+├── lib/
+│   └── tau/
+│       └── wearable/
+│           ├── js/
+│           │   └── tau.min.js  # Tizen Advanced UI (TAU) JavaScript
+│           └── theme/
+│               └── default/
+│                   └── tau.min.css # TAU default theme
+├── resources/
+│   └── US.txt                  # US zip code data file
+├── tools/
+│   ├── convert-zipcodes.js     # Tool for processing zip code data (JS)
+│   └── convert_zipcodes.py     # Tool for processing zip code data (Python)
+├── test.html                   # Test/demo page
+├── CHANGELOG.md                # Project changelog
+└── README.md                   # Project documentation
 ```
 
 ### Location Services
