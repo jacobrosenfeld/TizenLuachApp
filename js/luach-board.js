@@ -334,6 +334,41 @@ class LuachBoardApp {
         });
     }
 
+    renderZmanimList() {
+        const list = document.getElementById('zmanim-list');
+        if (!list || !window.ZMANIM_LIST) return;
+        list.innerHTML = '';
+        // Determine label language
+        const labelLang = this.loadLabelLanguageSetting ? this.loadLabelLanguageSetting() : 'both';
+        const showEn = labelLang === 'en' || labelLang === 'both';
+        const showHe = labelLang === 'he' || labelLang === 'both';
+        window.ZMANIM_LIST.forEach(z => {
+            if (this.zmanimVisibility && this.zmanimVisibility[z.id] === false) return;
+            const row = document.createElement('div');
+            row.className = 'zmanim-list-row';
+            // Hebrew and English labels
+            const en = document.createElement('span');
+            en.className = 'label label-en';
+            en.textContent = z.label.split('/')[0] ? z.label.split('/')[0].trim() : '';
+            en.style.display = showEn ? '' : 'none';
+            en.style.order = 1;
+            const time = document.createElement('span');
+            time.className = 'time';
+            time.id = z.id;
+            time.textContent = '--:--';
+            time.style.order = 2;
+            const he = document.createElement('span');
+            he.className = 'label label-he';
+            he.textContent = z.label.split('/')[1] ? z.label.split('/')[1].trim() : '';
+            he.style.display = showHe ? '' : 'none';
+            he.style.order = 3;
+            row.appendChild(en);
+            row.appendChild(time);
+            row.appendChild(he);
+            list.appendChild(row);
+        });
+    }
+
     changeSelectedDate(deltaDays) {
         const d = new Date(this.selectedDate);
         d.setDate(d.getDate() + deltaDays);
@@ -419,20 +454,15 @@ class LuachBoardApp {
      * Update the zmanim display with calculated times
      */
     updateZmanimDisplay(zmanim) {
+        this.renderZmanimList();
         if (!window.ZMANIM_LIST) return;
         window.ZMANIM_LIST.forEach(z => {
             const element = document.getElementById(z.id);
             if (element) {
-                // Only show if enabled in settings
-                if (this.zmanimVisibility && this.zmanimVisibility[z.id] === false) {
-                    element.parentElement.style.display = 'none';
-                } else {
-                    element.parentElement.style.display = '';
-                    if (zmanim[z.id]) {
-                        let dateObj = zmanim[z.id];
-                        if (typeof dateObj === 'string') dateObj = new Date(dateObj);
-                        element.textContent = kosherJava.formatTime(dateObj, '12h', this.showSeconds);
-                    }
+                if (zmanim[z.id]) {
+                    let dateObj = zmanim[z.id];
+                    if (typeof dateObj === 'string') dateObj = new Date(dateObj);
+                    element.textContent = kosherJava.formatTime(dateObj, '12h', this.showSeconds);
                 }
             }
         });

@@ -577,6 +577,42 @@ body {
   transform: translateX(calc(2rem - 18px));
 }
 
+/* New single zmanim list layout */
+.zmanim-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+}
+.zmanim-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1.1em;
+}
+.zmanim-list-row .label-he {
+  flex: 1 1 0;
+  text-align: right;
+  font-weight: 500;
+  direction: rtl;
+  order: 1;
+}
+.zmanim-list-row .time {
+  flex: 0 0 80px;
+  text-align: center;
+  font-family: monospace;
+  font-size: 1.1em;
+  order: 2;
+}
+.zmanim-list-row .label-en {
+  flex: 1 1 0;
+  text-align: left;
+  color: #666;
+  order: 3;
+}
+
 /* Utility classes */
 .hidden {
     display: none !important;
