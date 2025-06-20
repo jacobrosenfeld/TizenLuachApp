@@ -90,19 +90,67 @@ class KosherJavaWrapper {
         const zmanimCalendar = new ComplexZmanimCalendar(geoLocation);
         zmanimCalendar.setDate(date);
         const jewishCal = new JewishCalendar(date);
+        
         // Dynamically calculate zmanim from ZMANIM_LIST
         const zmanim = {};
+        
         if (window.ZMANIM_LIST) {
-            window.ZMANIM_LIST.forEach(z => {
-                if (z.method && typeof zmanimCalendar[z.method] === 'function') {
-                    zmanim[z.id] = zmanimCalendar[z.method]();
-                } else if (z.id === 'candleLighting' && jewishCal.hasCandleLighting && jewishCal.hasCandleLighting()) {
-                    if (typeof zmanimCalendar.getCandleLighting === 'function') {
-                        zmanim[z.id] = zmanimCalendar.getCandleLighting();
+            // Store registered methods for debugging
+            const registeredMethods = [];
+            
+            // Go through each zman in the ZMANIM_LIST
+            for (const zman of window.ZMANIM_LIST) {
+                try {
+                    // Skip if no method is defined
+                    if (!zman.method) continue;
+                    
+                    // Check if it's a direct method on the zmanimCalendar
+                    if (typeof zmanimCalendar[zman.method] === 'function') {
+                        // Call the method directly
+                        zmanim[zman.id] = zmanimCalendar[zman.method]();
+                        registeredMethods.push(zman.method);
+                    } 
+                    // Handle special case for candle lighting
+                    else if (zman.id === 'candleLighting' && jewishCal.hasCandleLighting && jewishCal.hasCandleLighting()) {
+                        if (typeof zmanimCalendar.getCandleLighting === 'function') {
+                            zmanim[zman.id] = zmanimCalendar.getCandleLighting();
+                            registeredMethods.push('getCandleLighting');
+                        }
                     }
+                    // Handle parameterized methods - methods defined like "getMethod(param)"
+                    else if (zman.method.includes('(') && zman.method.includes(')')) {
+                        const methodMatch = zman.method.match(/(\w+)\s*\(\s*([\d.-]+)\s*\)/);
+                        if (methodMatch && methodMatch.length >= 3) {
+                            const methodName = methodMatch[1];
+                            const param = parseFloat(methodMatch[2]);
+                            
+                            if (typeof zmanimCalendar[methodName] === 'function') {
+                                zmanim[zman.id] = zmanimCalendar[methodName](param);
+                                registeredMethods.push(`${methodName}(${param})`);
+                            }
+                        }
+                    }
+                    // Try to find a similar method by removing prefixes (get, calculate, etc.)
+                    else {
+                        const methodNameNormalized = zman.method.replace(/^(get|calculate)/i, '');
+                        // Loop through all methods on the zmanimCalendar
+                        for (const key in zmanimCalendar) {
+                            if (typeof zmanimCalendar[key] === 'function' && 
+                                key.toLowerCase().replace(/^(get|calculate)/i, '').includes(methodNameNormalized.toLowerCase())) {
+                                zmanim[zman.id] = zmanimCalendar[key]();
+                                registeredMethods.push(key);
+                                break;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Error calculating zman ${zman.id} (${zman.method}):`, error);
                 }
-            });
+            }
+            
+            console.log('Registered zmanim methods:', registeredMethods);
         }
+        
         console.log('Zmanim calculated:', zmanim);
         return zmanim;
     }
@@ -301,6 +349,61 @@ class KosherJavaWrapper {
             hasLocation: this.location !== null,
             location: this.location
         };
+    }
+
+    /**
+     * List all available zmanim methods in the KosherZmanim library
+     * Useful for discovering available methods to add to ZMANIM_LIST
+     */
+    async listAvailableZmanimMethods() {
+        await this.ready();
+        if (!window.KosherZmanim) {
+            throw new Error('kosher-zmanim library not loaded');
+        }
+        
+        const ComplexZmanimCalendar = window.KosherZmanim.ComplexZmanimCalendar;
+        const zmanimCalendar = new ComplexZmanimCalendar();
+        
+        // Get all methods that might be zmanim calculations
+        const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(zmanimCalendar))
+            .filter(name => {
+                // Filter to likely zmanim methods (get* methods that return Date objects)
+                return typeof zmanimCalendar[name] === 'function' && 
+                       (name.startsWith('get') || name.startsWith('calculate'));
+            });
+            
+        return methods;
+    }
+
+    /**
+     * Add a new zman to the ZMANIM_LIST
+     * @param {string} id - The unique ID for the zman
+     * @param {string} label - The display label (English/Hebrew)
+     * @param {string} method - The method name in KosherZmanim
+     * @returns {boolean} - Whether the addition was successful
+     */
+    addZman(id, label, method) {
+        if (!window.ZMANIM_LIST) {
+            console.error('ZMANIM_LIST not found');
+            return false;
+        }
+        
+        // Check if the ID already exists
+        if (window.ZMANIM_LIST.some(z => z.id === id)) {
+            console.error(`Zman with ID "${id}" already exists`);
+            return false;
+        }
+        
+        // Add to the list
+        window.ZMANIM_LIST.push({ id, label, method });
+        
+        // Refresh if we've already calculated zmanim
+        if (this.lastCalculatedZmanim) {
+            console.log(`Added new zman: ${id}`);
+            return true;
+        }
+        
+        return true;
     }
 }
 

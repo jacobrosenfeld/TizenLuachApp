@@ -485,6 +485,21 @@ class LuachBoardApp {
     }
 
     /**
+     * Refresh the zmanim list when new zmanim are added
+     * without recalculating all zmanim
+     */
+    refreshZmanList() {
+        // This method refreshes the zmanim list when new zmanim are added
+        // without recalculating all zmanim
+        if (kosherJava.lastCalculatedZmanim) {
+            this.renderZmanimList();
+            this.updateZmanimDisplay(kosherJava.lastCalculatedZmanim);
+        } else {
+            this.refreshZmanim();
+        }
+    }
+
+    /**
      * Update the zmanim display with calculated times
      */
     updateZmanimDisplay(zmanim) {
@@ -1013,6 +1028,33 @@ class LuachBoardApp {
      */
     destroy() {
         this.stopAutoRefresh();
+    }
+
+    /**
+     * Load zmanim list from an external JSON file or API endpoint
+     * This allows for dynamic customization of zmanim list without changing the code
+     * @param {string} url - URL to the JSON file or API endpoint
+     */
+    async loadZmanimListFromUrl(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch zmanim list: ${response.status}`);
+            }
+            const zmanimList = await response.json();
+            
+            // Replace the current ZMANIM_LIST with the new one
+            window.ZMANIM_LIST = zmanimList;
+            
+            // Refresh the display
+            this.refreshZmanList();
+            
+            return true;
+        } catch (error) {
+            console.error('Failed to load zmanim list:', error);
+            this.showError('Failed to load zmanim list');
+            return false;
+        }
     }
 }
 

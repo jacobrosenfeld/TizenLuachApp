@@ -5,12 +5,21 @@
 // To add or remove zmanim from the app, simply edit this file. Each entry should have:
 //   - id: The unique string used for the HTML element id and as the key for toggling visibility.
 //   - label: The display label for the settings panel (can include English/Hebrew).
-//   - method: (optional) The method name in the kosher-zmanim library (if different from id, for custom zmanim).
+//   - method: The method name in the kosher-zmanim library to calculate this zman.
 //
-// If you add a zman here and it matches a method in the kosher-zmanim library, it will be calculated and displayed automatically.
+// Method specification options:
+//   1. Direct method name:            'getSunrise'
+//   2. Method with parameter:         'getSunsetOffset(18.0)'
+//   3. Special cases:                 Methods like 'candleLighting' are handled specially
 //
-// Example for a custom zman:
-//   { id: 'customZman', label: 'Custom Zman / זמן מותאם', method: 'getCustomZman' }
+// The app will automatically try to find the best match for your method name in the KosherZmanim library.
+// If you're not sure what methods are available, you can use kosherJava.listAvailableZmanimMethods() 
+// in the browser console to see a list of all available methods.
+//
+// Examples:
+//   { id: 'sunrise', label: 'Sunrise / נץ החמה', method: 'getSunrise' }
+//   { id: 'shkia-18', label: 'Shkia 18° / שקיעה 18°', method: 'getSunsetOffset(18.0)' }
+//   { id: 'candleLighting', label: 'Candle Lighting / הדלקת נרות', method: 'getCandleLighting' }
 
 window.ZMANIM_LIST = [
   { id: 'sunrise', label: 'Sunrise / נץ החמה', method: 'getSunrise' },
@@ -30,4 +39,6 @@ window.ZMANIM_LIST = [
   { id: 'Tzeis-baal-hatanya', label: 'Tzeis Baal Hatanya / צאת בעל התניא', method: 'getTzaisBaalHatanya' },
   { id: 'candleLighting', label: 'Candle Lighting / הדלקת נרות', method: 'getCandleLighting' },
   { id: 'plag-hamincha-gra', label: 'Plag Hamincha (GRA) / פלג המנחה (הגר"א)', method: 'getPlagHaminchaGRA' }, 
+  // Example of a zman with a parameter
+  { id: 'alos-16-1', label: 'Alos 16.1° / עלות 16.1°', method: 'getAlos16Point1Degrees' },
 ];
