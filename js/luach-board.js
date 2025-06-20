@@ -338,11 +338,38 @@ class LuachBoardApp {
         const list = document.getElementById('zmanim-list');
         if (!list || !window.ZMANIM_LIST) return;
         list.innerHTML = '';
+        
         // Determine label language
         const labelLang = this.loadLabelLanguageSetting ? this.loadLabelLanguageSetting() : 'both';
         const showEn = labelLang === 'en' || labelLang === 'both';
         const showHe = labelLang === 'he' || labelLang === 'both';
-        window.ZMANIM_LIST.forEach(z => {
+        
+        // Get the zmanim with their times for sorting
+        let zmanimWithTimes = [...window.ZMANIM_LIST];
+        
+        // Sort by time if we have calculated zmanim available
+        if (kosherJava.lastCalculatedZmanim) {
+            const zmanim = kosherJava.lastCalculatedZmanim;
+            
+            // Add time values to the zmanim list for sorting
+            zmanimWithTimes = zmanimWithTimes.map(z => {
+                const timeValue = zmanim[z.id];
+                return {
+                    ...z,
+                    timeObj: timeValue ? new Date(timeValue) : null
+                };
+            });
+            
+            // Sort by time (earliest to latest)
+            zmanimWithTimes.sort((a, b) => {
+                // Handle null values (put them at the end)
+                if (!a.timeObj) return 1;
+                if (!b.timeObj) return -1;
+                return a.timeObj - b.timeObj;
+            });
+        }
+        
+        zmanimWithTimes.forEach(z => {
             if (this.zmanimVisibility && this.zmanimVisibility[z.id] === false) return;
             const row = document.createElement('div');
             row.className = 'zmanim-list-row';
@@ -436,6 +463,13 @@ class LuachBoardApp {
             // Wait for kosherJava to be ready before calculating zmanim
             await kosherJava.ready();
             const zmanim = await kosherJava.calculateZmanim(date);
+            
+            // Store the calculated zmanim for later use (for sorting)
+            kosherJava.lastCalculatedZmanim = zmanim;
+            
+            // Render the zmanim list (now it will be sorted)
+            this.renderZmanimList();
+            
             this.updateZmanimDisplay(zmanim);
             this.updateDateDisplay(date);
             this.updateLastUpdated();
@@ -454,7 +488,9 @@ class LuachBoardApp {
      * Update the zmanim display with calculated times
      */
     updateZmanimDisplay(zmanim) {
-        this.renderZmanimList();
+        // Do not call renderZmanimList here anymore as it's called in refreshZmanim
+        // after storing the zmanim for sorting
+        
         if (!window.ZMANIM_LIST) return;
         window.ZMANIM_LIST.forEach(z => {
             const element = document.getElementById(z.id);

@@ -12,6 +12,7 @@ class KosherJavaWrapper {
         this.jewishCalendar = null;
         this.hebrewDateFormatter = null;
         this.initialized = false;
+        this.lastCalculatedZmanim = null; // Store the last calculated zmanim for sorting
         this._readyPromise = new Promise((resolve) => {
             if (window.KosherZmanim) {
                 this.initialized = true;
