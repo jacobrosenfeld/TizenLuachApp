@@ -233,19 +233,13 @@ class KosherJavaWrapper {
             const jewishCal = new JewishCalendar(date);
             const formatter = new HebrewDateFormatter();
             formatter.setHebrewFormat(true); // Output in Hebrew
-            // Get Hebrew day of week
-            const hebrewDays = ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'שבת'];
-            let dayOfWeek = hebrewDays[jewishCal.getDayOfWeek() - 1];
-            // If Shabbat, do not prefix with 'יום'
-            if (jewishCal.getDayOfWeek() === 7) {
-                dayOfWeek = 'שבת';
-            }
+            // Only return the formatted Hebrew date (no day name)
             return {
-                formatted: `${dayOfWeek}, ${formatter.format(jewishCal)}`
+                formatted: formatter.format(jewishCal)
             };
         } catch (error) {
             console.error('Error getting Hebrew date:', error);
-            return null;
+            return { formatted: '' };
         }
     }
 
@@ -407,6 +401,25 @@ class KosherJavaWrapper {
         }
         
         return true;
+    }
+
+    /**
+     * Get Hebrew day name for a given date
+     */
+    getHebrewDayName(date = new Date()) {
+        // 0 = Sunday, 6 = Shabbat
+        const hebrewDays = [
+            'ראשון', // Sunday
+            'שני',   // Monday
+            'שלישי', // Tuesday
+            'רביעי', // Wednesday
+            'חמישי', // Thursday
+            'שישי',  // Friday
+            'שבת'    // Shabbat
+        ];
+        // JS: 0=Sunday, 6=Saturday
+        const day = date.getDay();
+        return hebrewDays[day];
     }
 }
 

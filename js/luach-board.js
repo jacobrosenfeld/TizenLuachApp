@@ -627,14 +627,13 @@ class LuachBoardApp {
             const hebrewDate = kosherJava.getHebrewDate(jewishDateToShow);
             if (hebrewDate && hebrewDate.formatted) {
                 let hebText = hebrewDate.formatted;
+                const dayName = kosherJava.getHebrewDayName(jewishDateToShow);
                 if (showLail) {
                     // Add 'ליל' prefix and day name
-                    const dayName = kosherJava.getHebrewDayName(jewishDateToShow);
-                    hebText = `ליל ${dayName} (${hebText})`;
+                    hebText = `ליל ${dayName} ${hebText}`;
                 } else {
                     // Add 'יום' prefix and day name
-                    const dayName = kosherJava.getHebrewDayName(jewishDateToShow);
-                    hebText = `יום ${dayName} (${hebText})`;
+                    hebText = `יום ${dayName} ${hebText}`;
                 }
                 hebrewDateEl.textContent = hebText;
             }
