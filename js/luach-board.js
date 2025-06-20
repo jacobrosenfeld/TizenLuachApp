@@ -320,6 +320,21 @@ class LuachBoardApp {
             'Tzeis-baal-hatanya': zmanim.tzeisBaalHatanya
         };
 
+        // Candle lighting logic
+        const candleLightingRow = document.getElementById('candleLighting')?.parentElement;
+        if (candleLightingRow) {
+            if (zmanim.candleLighting) {
+                let dateObj = zmanim.candleLighting;
+                if (typeof dateObj === 'string') {
+                    dateObj = new Date(dateObj);
+                }
+                document.getElementById('candleLighting').textContent = kosherJava.formatTime(dateObj, '12h', this.showSeconds);
+                candleLightingRow.style.display = '';
+            } else {
+                candleLightingRow.style.display = 'none';
+            }
+        }
+
         for (const [elementId, time] of Object.entries(timeElements)) {
             const element = document.getElementById(elementId);
             let dateObj = time;

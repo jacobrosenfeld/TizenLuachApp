@@ -85,9 +85,11 @@ class KosherJavaWrapper {
         // Use ComplexZmanimCalendar for advanced zmanim calculations
         const GeoLocation = window.KosherZmanim.GeoLocation;
         const ComplexZmanimCalendar = window.KosherZmanim.ComplexZmanimCalendar;
+        const JewishCalendar = window.KosherZmanim.JewishCalendar;
         const geoLocation = new GeoLocation('Location', latitude, longitude, elevation || 0, timezone);
         const zmanimCalendar = new ComplexZmanimCalendar(geoLocation);
         zmanimCalendar.setDate(date);
+        const jewishCal = new JewishCalendar(date);
         // Return all available zmanim
         const zmanim = {
             alos: zmanimCalendar.getAlosHashachar(),
@@ -106,6 +108,10 @@ class KosherJavaWrapper {
             tzeis72: zmanimCalendar.getTzais72(),
             tzeisBaalHatanya: zmanimCalendar.getTzaisBaalHatanya && zmanimCalendar.getTzaisBaalHatanya(),
         };
+        // Add candle lighting if applicable
+        if (jewishCal.hasCandleLighting && jewishCal.hasCandleLighting()) {
+            zmanim.candleLighting = zmanimCalendar.getCandleLighting();
+        }
         console.log('Zmanim calculated:', zmanim);
         return zmanim;
     }
