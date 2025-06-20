@@ -1,32 +1,76 @@
 # Luach Board - Tizen App
 
-A comprehensive Jewish calendar and zmanim display board built for Tizen devices, featuring location-based calculations using KosherJava libraries.
+A comprehensive Jewish calendar and zmanim display board built for Tizen devices, featuring location-based calculations using KosherJava libraries (planned for production; current version uses kosher-zmanim.js with full feature set).
+
+---
+
+## 🚦 Project Status (June 2025)
+
+- **Stable demo release:** All core features (zmanim display, location detection, timezone support, Hebrew calendar, responsive UI) are implemented and working.
+- **Zmanim calculations:** Uses kosher-zmanim.js for full-featured zmanim, including candle lighting, multiple tzeis, Baal HaTanya, and more.
+- **Location services:** US zip code lookup (multi-API fallback), manual coordinates, and GPS (with reverse geocoding) are fully supported.
+- **Date picker:** Lookup zmanim for any date with arrows and calendar input.
+- **Auto-refresh:** Configurable interval (1–1440 minutes); can be disabled.
+- **Show/hide seconds:** Toggle for zmanim display.
+- **Allow/disallow lookups:** Option to restrict zmanim to today only for privacy/performance.
+- **Timezone support:** Auto-detect and manual override for global timezones.
+- **Custom location title:** Set a custom name for your location.
+- **Persistent settings:** All preferences and location info saved in LocalStorage.
+- **Error/success feedback:** User-friendly messages for all actions.
+- **Debug mode:** Enable with `localStorage.setItem('luach-debug', 'true')`.
+- **Production readiness:** See notes below for planned enhancements and integration steps.
+
+---
 
 ## Features
 
 ### 🕰️ Zmanim Display
-- **Sunrise & Sunset** - Basic solar times
-- **Shacharit Times** - Alos Hashachar, Misheyakir, Sof Zman Shma, Sof Zman Tfila
-- **Midday & Afternoon** - Chatzos, Mincha Gedola, Mincha Ketana, Plag Hamincha
-- **Evening Times** - Bein Hashmashos, Tzeis Hakochavim, Tzeis 72 minutes
+- **Full Zmanim Suite:**
+  - Sunrise, Sunset
+  - Alos Hashachar, Misheyakir
+  - Sof Zman Shma (MGA/GRA), Sof Zman Tfila (MGA/GRA)
+  - Chatzos, Mincha Gedola, Mincha Ketana, Plag Hamincha
+  - Bein Hashmashos, Tzeis Hakochavim, Tzeis 72, Tzeis Baal HaTanya
+  - Candle lighting (Fridays, if applicable)
+- **Date Picker:** Lookup zmanim for any date (arrows and calendar input)
+- **Show/Hide Seconds:** Toggle seconds in zmanim display
+- **Auto-Refresh:** Configurable interval (1–1440 minutes)
+- **Allow/Disallow Lookups:** Option to restrict to today only
+- **Last Updated:** Timestamp for last zmanim refresh
 
 ### 📍 Flexible Location Settings
-- **Zip Code Lookup** - Automatic geocoding from US zip codes
-- **Manual Coordinates** - Direct latitude/longitude input
-- **GPS Location** - Current device location detection
-- **Timezone Support** - Automatic and manual timezone selection
+- **Zip Code Lookup:** US zip code with multi-API fallback (Nominatim, ZipAPI, GeoNames)
+- **Manual Coordinates:** Direct latitude/longitude input
+- **GPS Location:** Device geolocation with reverse geocoding
+- **Timezone Support:** Auto-detect from coordinates or manual selection (global)
+- **Custom Location Title:** Set a custom name for your location
+- **Persistent Storage:** All settings saved in LocalStorage
 
 ### 🗓️ Hebrew Calendar
 - Hebrew date display with proper formatting
 - Hebrew numerals for dates and years
-- Day of week in Hebrew
+- Day of week in Hebrew (with “יום” prefix)
+- “Shabbos” replaces “Saturday” in English display
 
 ### 📱 User Interface
 - Clean, modern design optimized for Tizen
 - Responsive layout for different screen sizes
 - Hebrew and English text support
 - Color-coded zmanim categories
-- Auto-refresh functionality
+- Glassmorphism and modern UI effects
+- Auto-refresh and manual refresh
+- Error and success feedback for all actions
+
+### 🛠️ Technical Details
+- **Zmanim Engine:** kosher-zmanim.js (full feature set, fallback to local copy if CDN fails)
+- **Location:** Multi-API geocoding, GPS, manual
+- **Timezone:** Auto/manual, DST support
+- **Persistence:** LocalStorage for all settings
+- **Debug Mode:** Enable with `localStorage.setItem('luach-debug', 'true')`
+- **Input Validation:** All user inputs validated
+- **Error Handling:** User-friendly error and success messages
+
+---
 
 ## Installation
 
@@ -115,9 +159,10 @@ TizenLuachApp/
 
 ### Zmanim Calculations
 
-**Current Implementation**: Simplified astronomical calculations for demonstration
+**Current Implementation:** Simplified astronomical calculations for demonstration. **Not for halachic use.**
 
-**Production Integration**: Replace with actual KosherJava library:
+**Planned Production Integration:** Replace with actual KosherJava library (via WASM, Java bridge, or API service).
+
 ```javascript
 // Example integration with real KosherJava
 import { GeoLocation, ZmanimCalendar } from 'kosherjava';
@@ -188,11 +233,8 @@ const sunrise = zmanimCalendar.getSunrise();
 
 ### KosherJava Integration
 
-For production use, integrate with the actual KosherJava library:
-
-1. **Java Integration**: Use Tizen's Java-JavaScript bridge
-2. **WebAssembly**: Compile KosherJava to WASM
-3. **API Service**: Host KosherJava calculations on a server
+- **Current:** kosher-zmanim.js (full feature set)
+- **Planned:** Integrate KosherJava for even more accurate zmanim (via WASM, Java bridge, or API service)
 
 ### API Keys
 
@@ -248,8 +290,8 @@ localStorage.setItem('luach-debug', 'true');
 
 ## License
 
-This project is provided as a demonstration. For production use, ensure compliance with:
-- KosherJava library license
+This project is a demonstration. For production, ensure compliance with:
+- KosherJava library license (if/when integrated)
 - Geocoding service terms of use
 - Tizen development guidelines
 

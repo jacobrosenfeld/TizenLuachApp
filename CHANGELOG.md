@@ -1,5 +1,65 @@
 # Luach Board - Changelog
 
+## Version 1.1.0 - Feature Expansion & Stability (June 20, 2025)
+
+### 🚀 **Active Features**
+- Full zmanim calculation using kosher-zmanim.js (with fallback to local copy if CDN fails)
+- Candle lighting time (if applicable)
+- Multiple tzeis options, including Tzeis Baal HaTanya
+- Date picker and arrows for zmanim lookup on any date
+- Auto-refresh with configurable interval (1–1440 minutes)
+- Show/hide seconds toggle for zmanim display
+- Allow/disallow zmanim lookups for arbitrary dates (for performance/privacy)
+- Location via US zip code (multi-API fallback), manual coordinates, or GPS (with reverse geocoding)
+- Timezone auto-detection and manual override (with global support)
+- Custom location title
+- Hebrew and English date display, with “Shabbos” for Saturday
+- Persistent settings (location, preferences, etc.) in LocalStorage
+- Responsive, modern UI for Tizen (with glassmorphism, color-coded categories)
+- Debug mode via localStorage
+- Error and success feedback for all user actions
+- Last updated timestamp
+- Settings and main page navigation
+- Input validation for all location methods
+
+### 🧪 **Testing Status**
+- ✅ All features above tested and working on Tizen device and emulator
+- ✅ Location, timezone, and zmanim calculations verified for US, Israel, and global cities
+- ✅ UI/UX tested for Hebrew/English, RTL/LTR, and various screen sizes
+
+### 🎯 **Next Steps**
+- Holiday detection and display
+- Havdala times (Saturday evenings)
+- Nightfall date transitions (לילי שישי)
+- Further UI polish and performance optimizations
+- Full KosherJava integration (WASM/Java bridge/API)
+
+---
+
+## Version 1.0.2 - Current Status Update (June 20, 2025)
+
+### 📦 **Project Status**
+- The app is stable and fully functional as a Tizen web app demo.
+- Timezone handling, location detection (zip code, GPS, manual), and zmanim calculations are working as intended.
+- UI is responsive and supports both Hebrew and English.
+- LocalStorage is used for persistent settings.
+- **Note:** Zmanim calculations use simplified astronomical logic; full KosherJava integration is planned for production.
+
+### 🆕 **Recent Improvements**
+- Improved timezone and DST handling for global locations.
+- Enhanced geocoding and timezone auto-detection.
+- UI/UX refinements for Tizen devices.
+- Debug mode for troubleshooting (enable via localStorage).
+
+### 🚧 **Planned Features**
+- Full KosherJava library integration (via WASM or API).
+- Holiday and candle lighting time display.
+- Nightfall date transitions and additional zmanim (e.g., Baal HaTanya, GRA/MA).
+- Offline location lookup and international zip code support.
+- Further UI polish and performance optimizations.
+
+---
+
 ## Version 1.0.1 - Timezone Fix (June 19, 2025)
 
 ### ✅ **RESOLVED: Timezone Issue**
