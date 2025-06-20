@@ -7,7 +7,7 @@
 
 class KosherJavaWrapper {
     constructor() {
-        this.defaultElevation = 0; // Sea level
+        this.defaultElevation = 30; // Sea level
         this.zmanimCalculator = null;
         this.jewishCalendar = null;
         this.hebrewDateFormatter = null;
