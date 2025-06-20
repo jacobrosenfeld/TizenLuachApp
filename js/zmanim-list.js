@@ -35,10 +35,8 @@ window.ZMANIM_LIST = [
   { id: 'mincha-ketana', label: 'Mincha Ketana / מנחה קטנה', method: 'getMinchaKetana' },
   { id: 'plag-hamincha', label: 'Plag Hamincha / פלג המנחה', method: 'getPlagHamincha' },
   { id: 'Tzeis-hakochavim', label: 'Tzeis Hakochavim / צאת הכוכבים', method: 'getTzais' },
-  { id: 'Tzeis-72', label: 'Tzeis 72 / צאת 72', method: 'getTzais72' },
+  { id: 'Tzeis-72', label: 'Tzeis 72 Minutes / צאת 72 דקות', method: 'getTzais72' },
   { id: 'Tzeis-baal-hatanya', label: 'Tzeis Baal Hatanya / צאת בעל התניא', method: 'getTzaisBaalHatanya' },
   { id: 'candleLighting', label: 'Candle Lighting / הדלקת נרות', method: 'getCandleLighting' },
-  { id: 'plag-hamincha-gra', label: 'Plag Hamincha (GRA) / פלג המנחה (הגר"א)', method: 'getPlagHaminchaGRA' }, 
-  // Example of a zman with a parameter
-  { id: 'alos-16-1', label: 'Alos 16.1° / עלות 16.1°', method: 'getAlos16Point1Degrees' },
+  { id: 'late-misheyakir', label: 'Late Misheyakir / משיכיר מאוחר', method: 'getBeginCivilTwilight' },
 ];
