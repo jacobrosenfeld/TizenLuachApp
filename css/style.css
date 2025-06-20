@@ -216,7 +216,7 @@ body {
 }
 
 .shacharit {
-    border-left: 4px solid #3498db;
+    border-left: 4px solid #2c3e50;
 }
 
 .afternoon {
@@ -319,14 +319,14 @@ body {
 .ui-radio-indicator {
     width: 20px;
     height: 20px;
-    border: 2px solid #3498db;
+    border: 2px solid #2c3e50;
     border-radius: 50%;
     position: relative;
     transition: all 0.3s;
 }
 
 .ui-radio input[type="radio"]:checked + .ui-radio-indicator {
-    background: #3498db;
+    background: #2c3e50;
 }
 
 .ui-radio input[type="radio"]:checked + .ui-radio-indicator::after {
@@ -365,7 +365,7 @@ body {
 
 .ui-input:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #2c3e50;
 }
 
 .ui-select {
@@ -400,7 +400,7 @@ body {
 }
 
 .ui-btn-primary {
-    background: #3498db;
+    background: #2c3e50;
     color: white;
 }
 
@@ -480,6 +480,40 @@ body {
 .success-popup.hidden {
     opacity: 0;
     pointer-events: none;
+}
+
+/* Button group for label language selection */
+.btn-group {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(44,62,80,0.07);
+}
+.btn-group .ui-btn {
+    flex: 1 1 0;
+    border-radius: 0;
+    margin: 0;
+    border: 1px solid #d0d7de;
+    border-right: none;
+    background: #f7fafd;
+    color: #2c3e50;
+    box-shadow: none;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-group .ui-btn:last-child {
+    border-right: 1px solid #d0d7de;
+}
+.btn-group .ui-btn.active, .btn-group .ui-btn:active {
+    background: #2c3e50;
+    color: #fff;
+    z-index: 1;
+}
+.btn-group .ui-btn:not(.active):hover {
+    background: #eaf1fb;
+    color: #2c3e50;
 }
 
 /* Utility classes */

@@ -68,6 +68,13 @@ class LuachBoardApp {
         localStorage.setItem('luach-debug', val ? 'true' : 'false');
     }
 
+    loadLabelLanguageSetting() {
+        return localStorage.getItem('luach-label-language') || 'en';
+    }
+    saveLabelLanguageSetting(val) {
+        localStorage.setItem('luach-label-language', val);
+    }
+
     /**
      * Set up all event listeners
      */
@@ -174,6 +181,32 @@ class LuachBoardApp {
                 this.debugMode = !this.debugMode;
                 this.updateDebugModeButton(debugModeBtn);
                 // Do not save or reload here; wait for Save Settings
+            });
+        }
+
+        // Zmanim Label Language button group
+        const labelLangEn = document.getElementById('label-lang-en');
+        const labelLangBoth = document.getElementById('label-lang-both');
+        const labelLangHe = document.getElementById('label-lang-he');
+        const group = document.getElementById('label-language-group');
+        if (labelLangEn && labelLangBoth && labelLangHe && group) {
+            const updateActive = (val) => {
+                labelLangEn.classList.remove('active');
+                labelLangBoth.classList.remove('active');
+                labelLangHe.classList.remove('active');
+                if (val === 'en') labelLangEn.classList.add('active');
+                else if (val === 'both') labelLangBoth.classList.add('active');
+                else labelLangHe.classList.add('active');
+            };
+            let current = this.loadLabelLanguageSetting();
+            updateActive(current);
+            [labelLangEn, labelLangBoth, labelLangHe].forEach(btn => {
+                btn.addEventListener('click', () => {
+                    let val = btn.id === 'label-lang-en' ? 'en' : btn.id === 'label-lang-both' ? 'both' : 'he';
+                    this.saveLabelLanguageSetting(val);
+                    updateActive(val);
+                    this.refreshZmanim();
+                });
             });
         }
 
@@ -359,6 +392,18 @@ class LuachBoardApp {
             }
         }
 
+        // Show/hide labels based on language setting
+        const labelLang = this.loadLabelLanguageSetting();
+        const showEn = labelLang === 'en' || labelLang === 'both';
+        const showHe = labelLang === 'he' || labelLang === 'both';
+        // For each time-item, toggle label-en and label-he
+        document.querySelectorAll('.time-item').forEach(item => {
+            const en = item.querySelector('.label-en');
+            const he = item.querySelector('.label-he');
+            if (en) en.style.display = showEn ? '' : 'none';
+            if (he) he.style.display = showHe ? '' : 'none';
+        });
+
         for (const [elementId, time] of Object.entries(timeElements)) {
             const element = document.getElementById(elementId);
             let dateObj = time;
@@ -375,8 +420,20 @@ class LuachBoardApp {
      * Update date display (Hebrew and English)
      */
     updateDateDisplay(date) {
+        const labelLang = this.loadLabelLanguageSetting();
         const hebrewDateEl = document.getElementById('hebrew-date');
         const englishDateEl = document.getElementById('english-date');
+
+        if (labelLang === 'en') {
+            if (englishDateEl) englishDateEl.style.display = '';
+            if (hebrewDateEl) hebrewDateEl.style.display = 'none';
+        } else if (labelLang === 'he') {
+            if (englishDateEl) englishDateEl.style.display = 'none';
+            if (hebrewDateEl) hebrewDateEl.style.display = '';
+        } else {
+            if (englishDateEl) englishDateEl.style.display = '';
+            if (hebrewDateEl) hebrewDateEl.style.display = '';
+        }
 
         if (englishDateEl) {
             let enDate = date.toLocaleDateString('en-US', {
