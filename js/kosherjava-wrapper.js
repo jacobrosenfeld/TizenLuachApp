@@ -103,19 +103,23 @@ class KosherJavaWrapper {
                 try {
                     // Skip if no method is defined
                     if (!zman.method) continue;
-                    
+
+                    // Special case: candleLighting should only be set if hasCandleLighting() is true
+                    if (zman.id === 'candleLighting') {
+                        if (jewishCal.hasCandleLighting && jewishCal.hasCandleLighting()) {
+                            if (typeof zmanimCalendar.getCandleLighting === 'function') {
+                                zmanim[zman.id] = zmanimCalendar.getCandleLighting();
+                                registeredMethods.push('getCandleLighting');
+                            }
+                        }
+                        // Always skip further processing for candleLighting
+                        continue;
+                    }
                     // Check if it's a direct method on the zmanimCalendar
                     if (typeof zmanimCalendar[zman.method] === 'function') {
                         // Call the method directly
                         zmanim[zman.id] = zmanimCalendar[zman.method]();
                         registeredMethods.push(zman.method);
-                    } 
-                    // Handle special case for candle lighting
-                    else if (zman.id === 'candleLighting' && jewishCal.hasCandleLighting && jewishCal.hasCandleLighting()) {
-                        if (typeof zmanimCalendar.getCandleLighting === 'function') {
-                            zmanim[zman.id] = zmanimCalendar.getCandleLighting();
-                            registeredMethods.push('getCandleLighting');
-                        }
                     }
                     // Handle parameterized methods - methods defined like "getMethod(param)"
                     else if (zman.method.includes('(') && zman.method.includes(')')) {
@@ -123,7 +127,6 @@ class KosherJavaWrapper {
                         if (methodMatch && methodMatch.length >= 3) {
                             const methodName = methodMatch[1];
                             const param = parseFloat(methodMatch[2]);
-                            
                             if (typeof zmanimCalendar[methodName] === 'function') {
                                 zmanim[zman.id] = zmanimCalendar[methodName](param);
                                 registeredMethods.push(`${methodName}(${param})`);

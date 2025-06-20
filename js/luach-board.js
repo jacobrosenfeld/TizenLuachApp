@@ -528,6 +528,7 @@ class LuachBoardApp {
         // Candle lighting logic
         const candleLightingRow = document.getElementById('candleLighting')?.parentElement;
         if (candleLightingRow) {
+            // Only show if candleLighting is present in zmanim (set by wrapper only if hasCandleLighting is true)
             if (zmanim.candleLighting) {
                 let dateObj = zmanim.candleLighting;
                 if (typeof dateObj === 'string') {
@@ -537,6 +538,9 @@ class LuachBoardApp {
                 candleLightingRow.style.display = '';
             } else {
                 candleLightingRow.style.display = 'none';
+                // Also clear any previous text just in case
+                const candleLightingElem = document.getElementById('candleLighting');
+                if (candleLightingElem) candleLightingElem.textContent = '--:--';
             }
         }
 
