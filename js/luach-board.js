@@ -12,6 +12,7 @@ class LuachBoardApp {
         this.allowZmanimLookups = this.loadAllowZmanimLookupsSetting();
         this.debugMode = this.loadDebugModeSetting();
         this.selectedDate = new Date();
+        this.zmanimVisibility = this.loadZmanimVisibility();
         
         // Wait for DOM to be ready
         if (document.readyState === 'loading') {
@@ -73,6 +74,25 @@ class LuachBoardApp {
     }
     saveLabelLanguageSetting(val) {
         localStorage.setItem('luach-label-language', val);
+    }
+
+    loadZmanimVisibility() {
+        const json = localStorage.getItem('luach-zmanim-visibility');
+        if (json) {
+            try {
+                return JSON.parse(json);
+            } catch (e) {}
+        }
+        // Default: all true, based on ZMANIM_LIST
+        if (window.ZMANIM_LIST) {
+            const vis = {};
+            window.ZMANIM_LIST.forEach(z => vis[z.id] = true);
+            return vis;
+        }
+        return {};
+    }
+    saveZmanimVisibility(vis) {
+        localStorage.setItem('luach-zmanim-visibility', JSON.stringify(vis));
     }
 
     /**
@@ -229,6 +249,14 @@ class LuachBoardApp {
                 }
             }
         });
+
+        // Zmanim toggle switches
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleList = document.getElementById('zmanim-toggle-list');
+            if (toggleList && typeof ZMANIM_LIST !== 'undefined') {
+                this.renderZmanimToggles(toggleList);
+            }
+        });
     }
 
     updateShowSecondsButton(btn) {
@@ -271,6 +299,33 @@ class LuachBoardApp {
         } else if (picker) {
             picker.remove();
         }
+    }
+
+    renderZmanimToggles(container) {
+        container.innerHTML = '';
+        if (!window.ZMANIM_LIST) return;
+        window.ZMANIM_LIST.forEach(zman => {
+            const div = document.createElement('div');
+            div.className = 'zmanim-toggle-row';
+            div.style.display = 'flex';
+            div.style.alignItems = 'center';
+            div.style.marginBottom = '6px';
+            const label = document.createElement('label');
+            label.textContent = zman.label;
+            label.style.flex = '1';
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.checked = !!this.zmanimVisibility[zman.id];
+            input.style.marginLeft = '8px';
+            input.addEventListener('change', () => {
+                this.zmanimVisibility[zman.id] = input.checked;
+                this.saveZmanimVisibility(this.zmanimVisibility);
+                this.refreshZmanim();
+            });
+            div.appendChild(label);
+            div.appendChild(input);
+            container.appendChild(div);
+        });
     }
 
     changeSelectedDate(deltaDays) {
@@ -358,24 +413,22 @@ class LuachBoardApp {
      * Update the zmanim display with calculated times
      */
     updateZmanimDisplay(zmanim) {
-        console.log('updateZmanimDisplay received:', zmanim);
-        const timeElements = {
-            'sunrise': zmanim.sunrise,
-            'sunset': zmanim.sunset,
-            'alos': zmanim.alos,
-            'misheyakir': zmanim.misheyakir,
-            'sof-zman-shma-mga': zmanim.sofZmanShmaMGA,
-            'sof-zman-shma-gra': zmanim.sofZmanShmaGRA,
-            'sof-zman-tfila-mga': zmanim.sofZmanTfilaMGA,
-            'sof-zman-tfila-gra': zmanim.sofZmanTfilaGRA,
-            'chatzos': zmanim.chatzos,
-            'mincha-gedola': zmanim.minchaGedola,
-            'mincha-ketana': zmanim.minchaKetana,
-            'plag-hamincha': zmanim.plagHamincha,
-            'Tzeis-hakochavim': zmanim.tzeisHakochavim,
-            'Tzeis-72': zmanim.tzeis72,
-            'Tzeis-baal-hatanya': zmanim.tzeisBaalHatanya
-        };
+        if (!window.ZMANIM_LIST) return;
+        window.ZMANIM_LIST.forEach(z => {
+            const element = document.getElementById(z.id);
+            if (element) {
+                if (this.zmanimVisibility && this.zmanimVisibility[z.id] === false) {
+                    element.parentElement.style.display = 'none';
+                } else {
+                    element.parentElement.style.display = '';
+                    if (zmanim[z.id]) {
+                        let dateObj = zmanim[z.id];
+                        if (typeof dateObj === 'string') dateObj = new Date(dateObj);
+                        element.textContent = kosherJava.formatTime(dateObj, '12h', this.showSeconds);
+                    }
+                }
+            }
+        });
 
         // Candle lighting logic
         const candleLightingRow = document.getElementById('candleLighting')?.parentElement;
@@ -403,17 +456,6 @@ class LuachBoardApp {
             if (en) en.style.display = showEn ? '' : 'none';
             if (he) he.style.display = showHe ? '' : 'none';
         });
-
-        for (const [elementId, time] of Object.entries(timeElements)) {
-            const element = document.getElementById(elementId);
-            let dateObj = time;
-            if (typeof time === 'string') {
-                dateObj = new Date(time);
-            }
-            if (element) {
-                element.textContent = kosherJava.formatTime(dateObj, '12h', this.showSeconds);
-            }
-        }
     }
 
     /**
@@ -480,6 +522,14 @@ class LuachBoardApp {
         if (customTitleInput) {
             customTitleInput.value = locationService.getCustomTitle();
         }
+
+        // Refresh zmanim toggles in settings
+        setTimeout(() => {
+            const toggleList = document.getElementById('zmanim-toggle-list');
+            if (toggleList && typeof ZMANIM_LIST !== 'undefined') {
+                this.renderZmanimToggles(toggleList);
+            }
+        }, 0);
     }
 
     /**

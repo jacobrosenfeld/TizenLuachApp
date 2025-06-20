@@ -516,6 +516,28 @@ body {
     color: #2c3e50;
 }
 
+/* Zmanim Toggle Rows */
+.zmanim-toggle-row {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.zmanim-toggle-row:last-child {
+    border-bottom: none;
+}
+
+.zmanim-toggle-row label {
+  font-size: 1em;
+  flex: 1;
+}
+
+.zmanim-toggle-row input[type="checkbox"] {
+  transform: scale(1.2);
+  margin-left: 8px;
+}
+
 /* Utility classes */
 .hidden {
     display: none !important;

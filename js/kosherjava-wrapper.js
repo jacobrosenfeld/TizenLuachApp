@@ -82,7 +82,6 @@ class KosherJavaWrapper {
             throw new Error('kosher-zmanim library not loaded');
         }
         const { latitude, longitude, timezone, elevation } = this.location;
-        // Use ComplexZmanimCalendar for advanced zmanim calculations
         const GeoLocation = window.KosherZmanim.GeoLocation;
         const ComplexZmanimCalendar = window.KosherZmanim.ComplexZmanimCalendar;
         const JewishCalendar = window.KosherZmanim.JewishCalendar;
@@ -90,27 +89,18 @@ class KosherJavaWrapper {
         const zmanimCalendar = new ComplexZmanimCalendar(geoLocation);
         zmanimCalendar.setDate(date);
         const jewishCal = new JewishCalendar(date);
-        // Return all available zmanim
-        const zmanim = {
-            alos: zmanimCalendar.getAlosHashachar(),
-            misheyakir: zmanimCalendar.getMisheyakir10Point2Degrees(),
-            sunrise: zmanimCalendar.getSunrise(),
-            sofZmanShmaMGA: zmanimCalendar.getSofZmanShmaMGA(),
-            sofZmanShmaGRA: zmanimCalendar.getSofZmanShmaGRA(),
-            sofZmanTfilaMGA: zmanimCalendar.getSofZmanTfilaMGA(),
-            sofZmanTfilaGRA: zmanimCalendar.getSofZmanTfilaGRA(),
-            chatzos: zmanimCalendar.getChatzos(),
-            minchaGedola: zmanimCalendar.getMinchaGedola(),
-            minchaKetana: zmanimCalendar.getMinchaKetana(),
-            plagHamincha: zmanimCalendar.getPlagHamincha(),
-            sunset: zmanimCalendar.getSunset(),
-            tzeisHakochavim: zmanimCalendar.getTzais(),
-            tzeis72: zmanimCalendar.getTzais72(),
-            tzeisBaalHatanya: zmanimCalendar.getTzaisBaalHatanya && zmanimCalendar.getTzaisBaalHatanya(),
-        };
-        // Add candle lighting if applicable
-        if (jewishCal.hasCandleLighting && jewishCal.hasCandleLighting()) {
-            zmanim.candleLighting = zmanimCalendar.getCandleLighting();
+        // Dynamically calculate zmanim from ZMANIM_LIST
+        const zmanim = {};
+        if (window.ZMANIM_LIST) {
+            window.ZMANIM_LIST.forEach(z => {
+                if (z.method && typeof zmanimCalendar[z.method] === 'function') {
+                    zmanim[z.id] = zmanimCalendar[z.method]();
+                } else if (z.id === 'candleLighting' && jewishCal.hasCandleLighting && jewishCal.hasCandleLighting()) {
+                    if (typeof zmanimCalendar.getCandleLighting === 'function') {
+                        zmanim[z.id] = zmanimCalendar.getCandleLighting();
+                    }
+                }
+            });
         }
         console.log('Zmanim calculated:', zmanim);
         return zmanim;
