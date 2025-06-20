@@ -102,8 +102,9 @@ class KosherJavaWrapper {
             minchaKetana: zmanimCalendar.getMinchaKetana(),
             plagHamincha: zmanimCalendar.getPlagHamincha(),
             sunset: zmanimCalendar.getSunset(),
-            tzeitHakochavim: zmanimCalendar.getTzais(),
-            tzeit72: zmanimCalendar.getTzais72(),
+            tzeisHakochavim: zmanimCalendar.getTzais(),
+            tzeis72: zmanimCalendar.getTzais72(),
+            tzeisBaalHatanya: zmanimCalendar.getTzaisBaalHatanya && zmanimCalendar.getTzaisBaalHatanya(),
         };
         console.log('Zmanim calculated:', zmanim);
         return zmanim;

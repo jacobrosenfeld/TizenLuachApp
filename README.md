@@ -8,7 +8,7 @@ A comprehensive Jewish calendar and zmanim display board built for Tizen devices
 - **Sunrise & Sunset** - Basic solar times
 - **Shacharit Times** - Alos Hashachar, Misheyakir, Sof Zman Shma, Sof Zman Tfila
 - **Midday & Afternoon** - Chatzos, Mincha Gedola, Mincha Ketana, Plag Hamincha
-- **Evening Times** - Bein Hashmashos, Tzeit Hakochavim, Tzeit 72 minutes
+- **Evening Times** - Bein Hashmashos, Tzeis Hakochavim, Tzeis 72 minutes
 
 ### 📍 Flexible Location Settings
 - **Zip Code Lookup** - Automatic geocoding from US zip codes

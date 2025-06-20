@@ -315,8 +315,9 @@ class LuachBoardApp {
             'mincha-gedola': zmanim.minchaGedola,
             'mincha-ketana': zmanim.minchaKetana,
             'plag-hamincha': zmanim.plagHamincha,
-            'tzeit-hakochavim': zmanim.tzeitHakochavim,
-            'tzeit-72': zmanim.tzeit72
+            'Tzeis-hakochavim': zmanim.tzeisHakochavim,
+            'Tzeis-72': zmanim.tzeis72,
+            'Tzeis-baal-hatanya': zmanim.tzeisBaalHatanya
         };
 
         for (const [elementId, time] of Object.entries(timeElements)) {

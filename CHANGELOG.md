@@ -50,7 +50,7 @@ Ready for implementing the following enhancements:
 3. Add holiday detection and display
 4. Include candle lighting times (Fridays)
 5. Add Havdala times (Saturday evenings)
-6. Add additional zmanim (Tzeit Baal HaTanya, GRA/MA times)
+6. Add additional zmanim (Tzeis Baal HaTanya, GRA/MA times)
 7. Implement automatic daily refresh
 
 ---
