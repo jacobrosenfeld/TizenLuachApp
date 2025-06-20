@@ -38,7 +38,7 @@ A comprehensive Jewish calendar and zmanim display board built for Tizen devices
 - **Allow/Disallow Lookups:** Option to restrict to today only
 - **Last Updated:** Timestamp for last zmanim refresh
 
-### 📍 Flexible Location Settings
+### 📍 Flexible Settings
 - **Zip Code Lookup:** US zip code with multi-API fallback (Nominatim, ZipAPI, GeoNames)
 - **Manual Coordinates:** Direct latitude/longitude input
 - **GPS Location:** Device geolocation with reverse geocoding
@@ -174,7 +174,7 @@ const sunrise = zmanimCalendar.getSunrise();
 
 ### Data Persistence
 
-- Location settings saved to LocalStorage
+- Settings saved to LocalStorage
 - Settings persist across app restarts
 - No external data transmission (privacy-focused)
 

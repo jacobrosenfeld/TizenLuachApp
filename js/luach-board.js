@@ -81,7 +81,7 @@ class LuachBoardApp {
             refreshBtn.addEventListener('click', () => this.refreshZmanim());
         }
 
-        // Location settings page
+        // Settings page
         const backBtn = document.getElementById('back-btn');
         const saveLocationBtn = document.getElementById('save-location-btn');
         const geocodeBtn = document.getElementById('geocode-btn');
@@ -388,7 +388,7 @@ class LuachBoardApp {
     }
 
     /**
-     * Show location settings page
+     * Show Settings page
      */
     showLocationSettings() {
         this.currentPage = 'location-page';
@@ -551,7 +551,7 @@ class LuachBoardApp {
     }
 
     /**
-     * Save location settings
+     * Save Settings
      */
     async saveLocation() {
         try {
